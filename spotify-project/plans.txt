@@ -1,0 +1,20 @@
+agile/scrum
+    goal of project 
+    product backlog
+    sprint planning
+        sprint duration?
+        choose which parts of product backlog are achievable in sprint duration
+            aka sprint backlog 
+        daily sprint backlog 
+            what did you do yesterday
+            what will you do today
+            what impediments may arise
+    sprint review: what did we finish during sprint
+    sprint retrospective: how to improve sprint 
+
+Goal:
+The end goal of the project is to create a spotify blend that accepts input
+in the form of playlist(s) from 2+ spotify users to create a custom playlist
+that would appease all parties.
+
+

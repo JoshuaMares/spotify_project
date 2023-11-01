@@ -1,4 +1,5 @@
-import Message from "./Message";
+import Navbar from "./Navbar.tsx";
+import Home from "./Home.tsx";
 import './App.css';
 import {useState, useEffect } from "react";
 import {clientID, secretClient} from "../../spotify_keys.ts"
@@ -19,7 +20,12 @@ function App(){
       .then(data => setAccessToken(data.access_token));
   }, [] );
 
-  return <div><Message /></div>;
+  return (<div className="App">
+            <Navbar/>
+            <div className="content">
+              <Home/>
+            </div>
+          </div>);
 }
 
 export default App;

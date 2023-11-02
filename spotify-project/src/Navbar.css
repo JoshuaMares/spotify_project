@@ -1,25 +1,37 @@
 .navbar{
-    padding: 20px;
     display: flex;
     align-items: center;
-    max-width: 600px;
+    justify-content: space-between;
     margin: 0 auto;
-    border-bottom: 1px solid #f2f2f2;
+    padding: 1rem;
+    border-bottom: 1px solid var(--spotify-dark-grey);
 }
 
-.navbar h1{
-    color: #f1356d;
+.site-title{
+    color: var(--spotify-green);
 }
 
-.navbar .links{
-    margin-left: auto;
+.links a{
+    color: var(--spotify-white);
+    background-color: transparent;
 }
 
 .navbar a{
-    margin-left: 16px;
+    text-decoration: none;
 }
 
-.navbar a:hover{
-    color: #f1356d;
+.links{
+    list-style: none;
+    display: flex;
+    gap: 1rem;
 }
 
+.links li{
+    padding: 3px;
+    border-radius: 15%;
+}
+
+.links li:hover{
+    background-color: var(--spotify-dark-grey);
+    box-shadow: 0 0 5px 5px var(--spotify-dark-grey);
+}

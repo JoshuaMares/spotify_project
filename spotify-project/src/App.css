@@ -1,10 +1,26 @@
-* {
-  margin: 0;
-  color: #333;
+:root{
+  --spotify-green: #1db954;
+  --spotify-black: #121212;
+  --spotify-dark-grey: #212121;
+  --spotify-grey: #535353;
+  --spotify-light-grey: #b3b3b3;
+  --spotify-white: white;
 }
 
+* {
+  box-sizing: border-box;
+  color: var(--spotify-green);
+  background-color: var(--spotify-black);
+}
+
+body{
+  margin: 0;
+}
+
+
+/* 
 .content{
   max-width: 600px;
   margin: 40px auto;
   padding: 20px;
-}
+} */

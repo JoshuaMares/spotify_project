@@ -2,36 +2,49 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 auto;
-    padding: 1rem;
+    margin: 0;
+    padding: 0;
     border-bottom: 1px solid var(--spotify-dark-grey);
+}
+
+.navbar h1{
+    margin: 0rem 1rem;
+    padding: 0;
 }
 
 .site-title{
     color: var(--spotify-green);
-}
-
-.links a{
-    color: var(--spotify-white);
-    background-color: transparent;
-}
-
-.navbar a{
     text-decoration: none;
+    font-family: Gotham-Black, sans-serif;
+    font-size: 3rem;
 }
 
 .links{
-    list-style: none;
     display: flex;
-    gap: 1rem;
+    font-size: 2rem;
+    margin: 0rem 1rem;
 }
 
-.links li{
-    padding: 3px;
-    border-radius: 15%;
+.links a{
+    margin: 0;
+    padding: 0;
 }
 
-.links li:hover{
-    background-color: var(--spotify-dark-grey);
-    box-shadow: 0 0 5px 5px var(--spotify-dark-grey);
+.fa-gear{
+    color: var(--spotify-white);
 }
+
+.fa-gear:hover{
+    animation: rotation infinite 5s cubic-bezier(.75,.5,.25,.5);
+    /* transform: rotate(90deg); */
+}
+
+@keyframes rotation{
+    from{
+      transform:rotate(0deg);
+    }
+  
+    to{
+      transform:rotate(360deg);
+    }
+  }

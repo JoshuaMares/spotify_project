@@ -1,3 +1,25 @@
+@font-face {
+  font-family: Gotham-Black;
+  src: url(./fonts/Gotham-Black.otf);
+}
+@font-face {
+  font-family: Gotham-Bold;
+  src: url(./fonts/GothamBold.ttf);
+}
+@font-face {
+  font-family: Gotham-Book;
+  src: url(./fonts/GothamBook.ttf);
+}
+@font-face {
+  font-family: Gotham-Light;
+  src: url(./fonts/GothamLight.ttf);
+}
+@font-face {
+  font-family: Gotham-Medium;
+  src: url(./fonts/GothamMedium.ttf);
+}
+
+
 :root{
   --spotify-green: #1db954;
   --spotify-black: #121212;
@@ -9,7 +31,6 @@
 
 * {
   box-sizing: border-box;
-  color: var(--spotify-green);
   background-color: var(--spotify-black);
 }
 

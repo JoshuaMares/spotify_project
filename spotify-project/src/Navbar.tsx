@@ -5,7 +5,7 @@ import './Navbar.css'
 const Navbar = () => {
     return ( 
     <nav className="navbar">
-        <h1><a href="/" className='site-title'>Spotify Mixers</a></h1>
+        <h1><a href="/" className='site-title'>Mixers</a></h1>
         <div className='links'>
             <a href="/Settings"><FontAwesomeIcon icon={faGear}/></a>
         </div>

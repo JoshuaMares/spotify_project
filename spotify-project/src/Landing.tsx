@@ -1,9 +1,9 @@
-import "./Intro.css"
+import "./Landing.css"
 import {requestAuthorization} from './spotify_functions';
 
-const Intro = () => {
+const Landing = () => {
     return (  
-        <div className="Intro">
+        <div className="Landing">
             <div className="textBox">
                 <h1>Welcome to Mixers!</h1>
                 <p>
@@ -17,4 +17,4 @@ const Intro = () => {
     );
 }
  
-export default Intro;
+export default Landing;

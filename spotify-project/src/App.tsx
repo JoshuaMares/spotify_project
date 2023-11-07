@@ -1,13 +1,16 @@
 import './App.css';
 import Navbar from "./Navbar.tsx";
-import Intro from "./Intro.tsx";
+import Landing from "./Landing.tsx";
 import {useState, useEffect } from "react";
 import {clientID, secretClient} from "../../spotify_keys.ts"
+import {onPageLoad} from './spotify_functions.tsx';
 
 function App(){
+  useEffect(onPageLoad, []);
+
   return (<div className="App">
             <Navbar/>
-            <Intro/>
+            <Landing/>
           </div>);
 }
 

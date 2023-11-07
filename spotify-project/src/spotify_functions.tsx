@@ -31,65 +31,6 @@ let redirect_uri = "http://localhost:5173/";
 const AUTHORIZE_URL = "https://accounts.spotify.com/authorize?";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
 
-function onPageLoad(){
-    if(window.location.search.length > 0){
-        handleRedirect();
-    }
-
-}
-
-function handleRedirect(){
-    let code = getCode();
-    fetchAccessToken(code);
-}
-
-function fetchAccessToken(code: string | null){
-    let body = 'grant_type=authorization_code';
-    body += "&code=" + code;
-    body += "&redirect_uri=" + encodeURI(redirect_uri);
-    body += "&client_id" + clientID;
-    body += "&client_secret=" + secretClient;
-    callAuthorizationAPI(body)
-}
-
-function callAuthorizationAPI(body: string){
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", TOKEN_URL, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.setRequestHeader('Authorization', 'Basic ' + btoa(clientID + ':' + secretClient));
-    xhr.send(body);
-    xhr.onload = handleAuthorizationResponse;
-}
-
-function handleAuthorizationResponse(){
-    if( this.status == 200){
-        var data = JSON.parse(this.responseText);
-        console.log(data);
-        if(data.access_token != undefined){
-            access_token = data.access_token;
-            localStorage.setItem("access_token", access_token);
-        }
-        if(data.refresh_token != undefined ){
-            refresh_token = data.refresh_token;
-            localStorage.setItem("refresh_token", refresh_token);
-        }
-        onPageLoad();
-    }else{
-        console.log(this.responseText);
-        alert(this.responseText);
-    }
-}
-
-function getCode(){
-    let code = null;
-    const queryString = window.location.search;
-    if(queryString.length > 0){
-        const urlParams = new URLSearchParams(queryString);
-        code = urlParams.get('code');
-    }
-    return code;
-}
-
 function requestAuthorization(){
     //scopes are permissions we want
     let scopes = ['playlist-read-private', //read private pl
@@ -111,4 +52,68 @@ function requestAuthorization(){
     window.location.href = url;   
 }
 
-export {getAccessToken, requestAuthorization};
+function onPageLoad(){
+    if(window.location.search.length > 0){
+        handleRedirect();
+    }
+}
+
+function handleRedirect(){
+    let code = getCode();
+    fetchAccessToken(code);
+    window.history.pushState("", "", redirect_uri);
+}
+
+function fetchAccessToken(code: string | null){
+    let body = 'grant_type=authorization_code';
+    body += "&code=" + code;
+    body += "&redirect_uri=" + encodeURI(redirect_uri);
+    body += "&client_id" + clientID;
+    body += "&client_secret=" + secretClient;
+    callAuthorizationAPI(body)
+}
+
+function callAuthorizationAPI(body: string){
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", TOKEN_URL, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader('Authorization', 'Basic ' + btoa(clientID + ':' + secretClient));
+    xhr.send(body);
+    xhr.onload = () => {
+        //handleAuthorizationResponse
+        if( xhr.status == 200){
+            let data = JSON.parse(xhr.responseText);
+            console.log(data);
+            if(data.access_token != undefined){
+                //access_token = data.access_token;
+                //localStorage.setItem("access_token", data.access_token);
+                console.log("access_token: " + data.access_token);
+            }
+            if(data.refresh_token != undefined ){
+                //refresh_token = data.refresh_token;
+                //localStorage.setItem("refresh_token", data.refresh_token);
+                console.log("refresh_token: " + data.refresh_token);
+            }
+            //onPageLoad();
+        }else{
+            console.log(xhr.responseText);
+            alert(xhr.responseText);
+        }
+    }
+}
+
+function getCode(){
+    let code = null;
+    const queryString = window.location.search;
+    if(queryString.length > 0){
+        const urlParams = new URLSearchParams(queryString);
+        code = urlParams.get('code');
+    }
+    return code;
+}
+
+
+//actual api calls
+
+
+export {getAccessToken, requestAuthorization, onPageLoad};

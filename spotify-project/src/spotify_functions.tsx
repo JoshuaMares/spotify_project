@@ -30,6 +30,8 @@ when user allows access the spotify page uses the redirect_uri we
 let redirect_uri = "http://localhost:5173/";
 const AUTHORIZE_URL = "https://accounts.spotify.com/authorize?";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
+let access_token = '';
+let refresh_token = '';
 
 function requestAuthorization(){
     //scopes are permissions we want
@@ -87,11 +89,14 @@ function callAuthorizationAPI(body: string){
             if(data.access_token != undefined){
                 //access_token = data.access_token;
                 //localStorage.setItem("access_token", data.access_token);
+                access_token = data.access_token;
                 console.log("access_token: " + data.access_token);
+                getPlaylists();
             }
             if(data.refresh_token != undefined ){
                 //refresh_token = data.refresh_token;
                 //localStorage.setItem("refresh_token", data.refresh_token);
+                refresh_token = data.refresh_token; 
                 console.log("refresh_token: " + data.refresh_token);
             }
             //onPageLoad();
@@ -114,6 +119,33 @@ function getCode(){
 
 
 //actual api calls
+function getPlaylists(){
+    callAPI('GET', 'https://api.spotify.com/v1/me/playlists', null, handlePlaylistResponse);
+}
+
+function handlePlaylistResponse(){
+    if(this.status == 200){
+        var data = JSON.parse(this.responseText);
+        console.log(data);
+        data.items.forEach( (item: any) => {
+            console.log(item.name);
+        });
+    }else if(this.status == 401){
+        //refreshAccessToken();
+    }else{
+        console.log(this.responseText);
+        alert(this.responseText);
+    }
+}
+
+function callAPI(method: string, url: string, body: string|null, callback: Function){
+    let xhr = new XMLHttpRequest();
+    xhr.open(method, url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + access_token)
+    xhr.send(body);
+    xhr.onload = callback;
+}
 
 
-export {getAccessToken, requestAuthorization, onPageLoad};
+export {getAccessToken, requestAuthorization, onPageLoad, access_token, refresh_token};

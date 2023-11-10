@@ -1,16 +1,22 @@
 import './App.css';
 import Navbar from "./Navbar.tsx";
 import Landing from "./Landing.tsx";
+import Playlists from './Playlists.tsx';
 import {useState, useEffect } from "react";
-import {clientID, secretClient} from "../../spotify_keys.ts"
-import {onPageLoad, access_token, refresh_token} from './spotify_functions.tsx';
+import {onPageLoad} from './spotify_functions.tsx';
 
 function App(){
-  useEffect(onPageLoad, []);
+  const [ARTokens, setAccRefTokens] = useState([null, null]);
+
+  useEffect(() => {
+    //run and get tokens
+    onPageLoad(setAccRefTokens);
+  }, []);
 
   return (<div className="App">
             <Navbar/>
-            <Landing/>
+            {!ARTokens[0] && <Landing/>}
+            {ARTokens[0] && <Playlists/>}
           </div>);
 }
 

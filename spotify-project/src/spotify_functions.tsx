@@ -30,8 +30,6 @@ when user allows access the spotify page uses the redirect_uri we
 let redirect_uri = "http://localhost:5173/";
 const AUTHORIZE_URL = "https://accounts.spotify.com/authorize?";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
-let access_token = '';
-let refresh_token = '';
 
 function requestAuthorization(){
     //scopes are permissions we want
@@ -54,28 +52,31 @@ function requestAuthorization(){
     window.location.href = url;   
 }
 
-function onPageLoad(){
+function onPageLoad(setTokensFunc: Function){
     if(window.location.search.length > 0){
-        handleRedirect();
+        handleRedirect(setTokensFunc);
     }
 }
 
-function handleRedirect(){
+function handleRedirect(setTokensFunc: Function){
     let code = getCode();
-    fetchAccessToken(code);
+    fetchAccessToken(setTokensFunc, code);
     window.history.pushState("", "", redirect_uri);
 }
 
-function fetchAccessToken(code: string | null){
+function fetchAccessToken(setTokensFunc: Function, code: string | null){
     let body = 'grant_type=authorization_code';
     body += "&code=" + code;
     body += "&redirect_uri=" + encodeURI(redirect_uri);
     body += "&client_id" + clientID;
     body += "&client_secret=" + secretClient;
-    callAuthorizationAPI(body)
+    return callAuthorizationAPI(setTokensFunc, body)
 }
 
-function callAuthorizationAPI(body: string){
+function callAuthorizationAPI(setTokensFunc: Function, body: string){
+    let access_token = null;
+    let refresh_token = null;
+
     let xhr = new XMLHttpRequest();
     xhr.open("POST", TOKEN_URL, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -91,7 +92,6 @@ function callAuthorizationAPI(body: string){
                 //localStorage.setItem("access_token", data.access_token);
                 access_token = data.access_token;
                 console.log("access_token: " + data.access_token);
-                getPlaylists();
             }
             if(data.refresh_token != undefined ){
                 //refresh_token = data.refresh_token;
@@ -99,6 +99,7 @@ function callAuthorizationAPI(body: string){
                 refresh_token = data.refresh_token; 
                 console.log("refresh_token: " + data.refresh_token);
             }
+            setTokensFunc([access_token, refresh_token]);
             //onPageLoad();
         }else{
             console.log(xhr.responseText);
@@ -148,4 +149,4 @@ function callAPI(method: string, url: string, body: string|null, callback: Funct
 }
 
 
-export {getAccessToken, requestAuthorization, onPageLoad, access_token, refresh_token};
+export {getAccessToken, requestAuthorization, onPageLoad};

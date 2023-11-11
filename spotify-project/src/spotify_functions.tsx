@@ -120,33 +120,35 @@ function getCode(){
 
 
 //actual api calls
-function getPlaylists(){
-    callAPI('GET', 'https://api.spotify.com/v1/me/playlists', null, handlePlaylistResponse);
+function getPlaylists(accessToken: string, setPlaylistsFunction: Function){
+    callAPI('GET', 'https://api.spotify.com/v1/me/playlists?offset=0&limit=50', null, handlePlaylistResponse, accessToken, setPlaylistsFunction);
 }
 
-function handlePlaylistResponse(){
-    if(this.status == 200){
-        var data = JSON.parse(this.responseText);
+function handlePlaylistResponse(xhr: any, setPlaylistsFunction: Function){
+    if(xhr.status == 200){
+        var data = JSON.parse(xhr.responseText);
         console.log(data);
-        data.items.forEach( (item: any) => {
-            console.log(item.name);
-        });
-    }else if(this.status == 401){
+        setPlaylistsFunction(data.items);
+        // data.items.forEach( (item: any) => {
+        //     console.log(item.name);
+        // });
+    }else if(xhr.status == 401){
         //refreshAccessToken();
     }else{
-        console.log(this.responseText);
-        alert(this.responseText);
+        console.log(xhr.responseText);
+        alert(xhr.responseText);
     }
+    
 }
 
-function callAPI(method: string, url: string, body: string|null, callback: Function){
+function callAPI(method: string, url: string, body: string|null, callback: Function, accessToken: string, setPlaylistsFunction: Function){
     let xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + access_token)
+    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
     xhr.send(body);
-    xhr.onload = callback;
+    xhr.onload = () => {callback(xhr, setPlaylistsFunction)};
 }
 
 
-export {getAccessToken, requestAuthorization, onPageLoad};
+export {getAccessToken, requestAuthorization, onPageLoad, getPlaylists};

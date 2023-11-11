@@ -1,3 +1,29 @@
+*{
+    color: var(--spotify-white);
+}
+
 .Playlists{
-    color: var(--spotify-white)
+    display: flex;
+    flex-direction: column;
+    color: var(--spotify-white);
+}
+
+.Playlist-Card{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: large;
+}
+
+.Playlist-Image{
+    height: 1rem;
+    width: 1rem;
+}
+
+.Playlist-Text{
+    border: none;
+}
+
+.Mix{
+    background-color: var(--spotify-green);
 }

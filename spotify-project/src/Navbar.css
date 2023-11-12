@@ -5,6 +5,8 @@
     margin: 0;
     padding: 0;
     border-bottom: 1px solid var(--spotify-dark-grey);
+    position: sticky;
+    top: 0;
 }
 
 .navbar h1{

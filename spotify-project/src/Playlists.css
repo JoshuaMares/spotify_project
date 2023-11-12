@@ -1,29 +1,83 @@
-*{
-    color: var(--spotify-white);
-}
-
 .Playlists{
     display: flex;
     flex-direction: column;
     color: var(--spotify-white);
+    border: none;
 }
 
 .Playlist-Card{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     font-size: large;
+    height: calc(0.15 * var(--img-dims));
+    /* border: 1px solid var(--spotify-white); */
+}
+
+.Full-Height{
+    height: 100%;
+}
+
+.Playlist-Image-Container{
+    width: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .Playlist-Image{
-    height: 1rem;
-    width: 1rem;
+    height: calc(0.125 * var(--img-dims));
+    width: calc(0.125 * var(--img-dims));
 }
 
 .Playlist-Text{
+    display: flex;
+    justify-content: left;
+    align-items: center;
     border: none;
+    width: 65%;
+}
+
+.Playlist-Name{
+    display: flex;
+    align-items: left;
+    text-overflow: ellipsis;
+    padding-right: 5%;
+}
+
+.Playlist-Checker-Container{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 10%;
+}
+
+.Playlist-Checked{
+    /* padding: 5px;
+    border-radius: 50%;
+    background-color: var(--spotify-green); */
+    font-size: xx-large;
+}
+
+.Playlist-Unchecked{
+    display: none;
+}
+
+.Mix-Container{
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    height: calc(0.125 * var(--img-dims));
 }
 
 .Mix{
     background-color: var(--spotify-green);
+    height: 95%;
+    width: 95%;
+    border: none;
+    border-radius: 10px;
 }

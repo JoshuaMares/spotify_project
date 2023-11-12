@@ -10,16 +10,35 @@ const Playlists = ({accessToken, getPlaylistsFunc}) => {
         getPlaylistsFunc(accessToken, setPlaylists);
     }, []);
 
+    function selectPlaylist(index: number){
+        //useState uses references to decide if dom should re-render so have to copy arrays
+        if(playlists[index].selected){
+            playlists[index].selected = false;
+        }else{
+            playlists[index].selected = true;
+        }
+        const updatedPlaylists = [...playlists];
+        setPlaylists(updatedPlaylists);
+    }
+
     return (
         <div className="Playlists">
-            {playlists.map((playlist) => (
-                <div className="Playlist-Card" key={playlist.id}>
-                    <img src={playlist.images[0].url} alt="{playlist.name}'s image" className="Playlist-Image" />
-                    <p className='Playlist-Text'> {playlist.name} </p>
-                    <FontAwesomeIcon icon={faCheck} className="Playlist-Checker"/>
+            {playlists.map((playlist, index) => (
+                <div className="Playlist-Card" key={playlist.id} onClick={() => {selectPlaylist(index)}}>
+                    <div className="Playlist-Image-Container Full-Height">
+                        <img src={playlist.images[0].url} alt="{playlist.name}'s image" className="Playlist-Image" />
+                    </div>
+                    <div className="Playlist-Text Full-Height">
+                        <p className='Playlist-Name'> {playlist.name} </p>
+                    </div>
+                    <div className="Playlist-Checker-Container Full-Height">
+                        <FontAwesomeIcon icon={faCheck} className={playlist.selected ? "Playlist-Checked" : "Playlist-Unchecked"}/>
+                    </div>
                 </div>
             ))}
-            <button className="Mix">Mix</button>
+            <div className="Mix-Container">
+                <button className="Mix">Mix</button>
+            </div>
         </div>
     );
 }

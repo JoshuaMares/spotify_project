@@ -27,6 +27,7 @@
   --spotify-grey: #535353;
   --spotify-light-grey: #b3b3b3;
   --spotify-white: white;
+  --img-dims: 640px;
 }
 
 * {

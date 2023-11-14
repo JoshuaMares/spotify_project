@@ -124,6 +124,18 @@ function getPlaylists(accessToken: string, setPlaylistsFunction: Function){
     callAPI('GET', 'https://api.spotify.com/v1/me/playlists?offset=0&limit=50', null, handlePlaylistResponse, accessToken, setPlaylistsFunction);
 }
 
+function mixPlaylists(access_token: string, playlists: Array){
+    //create playlists
+    //let playlist_id = createPlaylist(access_token);
+    //populate playlists
+}
+
+function createPlaylist(access_token: string, playlist_name: string, playlist_desc: string){
+    //call api
+
+    //return playlist id
+}
+
 function handlePlaylistResponse(xhr: any, setPlaylistsFunction: Function){
     if(xhr.status == 200){
         var data = JSON.parse(xhr.responseText);

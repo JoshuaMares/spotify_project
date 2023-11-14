@@ -5,6 +5,7 @@ import {useState, useEffect} from "react";
 
 const Playlists = ({accessToken, getPlaylistsFunc}) => {
     const [playlists, setPlaylists] = useState([]);
+    const [searchQuery, setSearch] = useState('');
     
     useEffect(() => {
         getPlaylistsFunc(accessToken, setPlaylists);
@@ -23,22 +24,20 @@ const Playlists = ({accessToken, getPlaylistsFunc}) => {
 
     return (
         <div className="Playlists">
+            <input className="Search-Bar" type="text" placeholder="Search..." autoComplete="off" onKeyUp={(e) => setSearch(e.target.value)}/>
             {playlists.map((playlist, index) => (
-                <div className="Playlist-Card" key={playlist.id} onClick={() => {selectPlaylist(index)}}>
-                    <div className="Playlist-Image-Container Full-Height">
-                        <img src={playlist.images[0].url} alt="{playlist.name}'s image" className="Playlist-Image" />
+                <div className={playlist.name.toLowerCase().includes(searchQuery.toLowerCase()) ? "Playlist-Card" : "Hidden"} key={playlist.id} onClick={() => {selectPlaylist(index)}}>
+                    <div className="Playlist-Card-Image-Container Full-Height">
+                        <img src={playlist.images[0].url} alt="{playlist.name}'s image" className="Playlist-Card-Image" />
                     </div>
                     <div className="Playlist-Text Full-Height">
                         <p className='Playlist-Name'> {playlist.name} </p>
                     </div>
                     <div className="Playlist-Checker-Container Full-Height">
-                        <FontAwesomeIcon icon={faCheck} className={playlist.selected ? "Playlist-Checked" : "Playlist-Unchecked"}/>
+                        <FontAwesomeIcon icon={faCheck} className={playlist.selected ? "Playlist-Checked" : "Hidden"}/>
                     </div>
                 </div>
             ))}
-            <div className="Mix-Container">
-                <button className="Mix">Mix</button>
-            </div>
         </div>
     );
 }

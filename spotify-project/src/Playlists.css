@@ -5,6 +5,22 @@
     border: none;
 }
 
+.Search-Bar{
+    border: none;
+    background-color: var(--spotify-dark-grey);
+    color: var(--spotify-white);
+    font-size: larger;
+    padding: 10px 5px;
+}
+
+.Search-Bar::placeholder{
+    color: var(--spotify-white);
+}
+
+.Hidden{
+    display: none;
+}
+
 .Playlist-Card{
     display: flex;
     flex-direction: row;
@@ -19,14 +35,14 @@
     height: 100%;
 }
 
-.Playlist-Image-Container{
+.Playlist-Card-Image-Container{
     width: 25%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.Playlist-Image{
+.Playlist-Card-Image{
     height: calc(0.125 * var(--img-dims));
     width: calc(0.125 * var(--img-dims));
 }
@@ -58,26 +74,4 @@
     border-radius: 50%;
     background-color: var(--spotify-green); */
     font-size: xx-large;
-}
-
-.Playlist-Unchecked{
-    display: none;
-}
-
-.Mix-Container{
-    position: sticky;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    border: none;
-    background: transparent;
-    height: calc(0.125 * var(--img-dims));
-}
-
-.Mix{
-    background-color: var(--spotify-green);
-    height: 95%;
-    width: 95%;
-    border: none;
-    border-radius: 10px;
 }

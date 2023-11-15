@@ -6,6 +6,8 @@
 }
 
 .Search-Bar{
+    position: sticky;
+    top: 73px;
     border: none;
     background-color: var(--spotify-dark-grey);
     color: var(--spotify-white);

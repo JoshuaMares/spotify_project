@@ -130,12 +130,6 @@ function mixPlaylists(access_token: string, playlists: Array){
     //populate playlists
 }
 
-function createPlaylist(access_token: string, playlist_name: string, playlist_desc: string){
-    //call api
-
-    //return playlist id
-}
-
 function handlePlaylistResponse(xhr: any, setPlaylistsFunction: Function){
     if(xhr.status == 200){
         var data = JSON.parse(xhr.responseText);

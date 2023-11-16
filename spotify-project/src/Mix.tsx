@@ -1,6 +1,7 @@
 import "./Mix.css"
 import Playlists from "./Playlists";
 import {useState, useEffect } from "react";
+import {makeMix} from './spotify_functions.tsx';
 
 const Mix = ({accessToken, getPlaylistsFunc}) => {
     const [mixName, setName] = useState('My Mix');
@@ -8,14 +9,12 @@ const Mix = ({accessToken, getPlaylistsFunc}) => {
     const [mixImage, setImage] = useState('');
     const [playlists, setPlaylists] = useState([]);
 
-
     const createMix = (e: Event) => {
         e.preventDefault();
         const playlistInfo = {mixName, mixDesc, mixImage};
+        //makeMix(playlistInfo, )
 
     }
-
-
 
     return (  
         <div className="Mix">

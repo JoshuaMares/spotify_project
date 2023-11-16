@@ -4,24 +4,33 @@ import Landing from "./Landing.tsx";
 import Mix from './Mix.tsx';
 import {useState, useEffect } from "react";
 import {onPageLoad, getPlaylists} from './spotify_functions.tsx';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 
 function App(){
-  const [landingPage, setLandingPage] = useState(true);
-  const [playlistsPage, setPlaylistsPage] = useState()
-  const [playlistSettingsPage, setNewPlatlistPage] = useState()
-
-  const [ARTokens, setAccRefTokens] = useState([null, null]);
-
   useEffect(() => {
-    //get tokens
-    onPageLoad(setAccRefTokens);
+    //onPageLoad();
   }, []);
 
-  return (<div className="App">
-            <Navbar/>
-            {!ARTokens[0] && <Landing/>}
-            {ARTokens[0] && <Mix accessToken={ARTokens[0]} getPlaylistsFunc={getPlaylists}/>}
-          </div>);
+  return (
+    <Router>
+      <div className="App">
+        <Navbar/>
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<Landing/>} />
+            <Route path="/home" element={<Mix />}/>
+            <Route path="/playlist/:id" />
+          </Routes>
+        </div>
+      </div>
+    </Router>
+  );
 }
 
 export default App;
+
+/*
+{!ARTokens[0] && <Landing/>}
+{ARTokens[0] && <Mix accessToken={ARTokens[0]} getPlaylistsFunc={getPlaylists}/>} 
+*/

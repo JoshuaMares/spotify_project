@@ -1,4 +1,5 @@
 import {clientID, secretClient} from "../../spotify_keys.ts"
+import {useState, useEffect } from "react";
 const HTML_URL_SPACE_ENCODING = '%20';
 
 //getting access token for application\
@@ -27,9 +28,25 @@ when user allows access the spotify page uses the redirect_uri we
     passed in to send us back to the mixers app
 
 */
-let redirect_uri = "http://localhost:5173/";
+let redirect_uri = "http://localhost:5173/home/";
 const AUTHORIZE_URL = "https://accounts.spotify.com/authorize?";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
+
+const useTokens = () => {
+    const [accessToken, setAccessToken] = useState('');
+    const [refreshToken, setRefreshToken] = useState('');
+
+    useEffect(() => {
+        let lsat = JSON.parse(localStorage.getItem('accessToken'));
+        let lsrt = JSON.parse(localStorage.getItem('refreshToken'));
+        if(lsat === null){
+        //get tokens
+        }else{
+        setAccessToken(lsat);
+        setRefreshToken(lsrt)
+        }
+    }, []);
+}
 
 function requestAuthorization(){
     //scopes are permissions we want
@@ -73,9 +90,9 @@ function fetchAccessToken(setTokensFunc: Function, code: string | null){
     return callAuthorizationAPI(setTokensFunc, body)
 }
 
-function callAuthorizationAPI(setTokensFunc: Function, body: string){
-    let access_token = null;
-    let refresh_token = null;
+function callAuthorizationAPI(body: string){
+    let accessToken = null;
+    let refreshToken = null;
 
     let xhr = new XMLHttpRequest();
     xhr.open("POST", TOKEN_URL, true);
@@ -99,7 +116,6 @@ function callAuthorizationAPI(setTokensFunc: Function, body: string){
                 refresh_token = data.refresh_token; 
                 console.log("refresh_token: " + data.refresh_token);
             }
-            setTokensFunc([access_token, refresh_token]);
             //onPageLoad();
         }else{
             console.log(xhr.responseText);

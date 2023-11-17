@@ -1,0 +1,13 @@
+.Library-Info{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.Banner{
+    color: var(--spotify-white);
+}
+
+.ASDF{
+    color: var(--spotify-white);
+}

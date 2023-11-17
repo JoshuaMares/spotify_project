@@ -1,17 +1,17 @@
 import './App.css';
 import Navbar from "./Navbar.tsx";
 import Landing from "./Landing.tsx";
-import Mix from './Mix.tsx';
-import {useState, useEffect } from "react";
-import {onPageLoad, getPlaylists} from './spotify_functions.tsx';
+import Home from "./Home.tsx"
+import {useTokens, onPageLoad, getPlaylists} from './spotify_functions.tsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+/*
+if we have keys stored, go straight to home page
+if no keys present landing page with button to get keys
+on callback
+*/
 
 function App(){
-  useEffect(() => {
-    //onPageLoad();
-  }, []);
-
   return (
     <Router>
       <div className="App">
@@ -19,8 +19,7 @@ function App(){
         <div className="content">
           <Routes>
             <Route path="/" element={<Landing/>} />
-            <Route path="/home" element={<Mix />}/>
-            <Route path="/playlist/:id" />
+            <Route path="/home/" element={<Home/>}/>
           </Routes>
         </div>
       </div>
@@ -29,8 +28,3 @@ function App(){
 }
 
 export default App;
-
-/*
-{!ARTokens[0] && <Landing/>}
-{ARTokens[0] && <Mix accessToken={ARTokens[0]} getPlaylistsFunc={getPlaylists}/>} 
-*/

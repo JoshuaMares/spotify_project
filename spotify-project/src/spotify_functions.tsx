@@ -2,23 +2,6 @@ import {clientID, secretClient} from "../../spotify_keys.ts"
 import {useState, useEffect } from "react";
 const HTML_URL_SPACE_ENCODING = '%20';
 
-//getting access token for application\
-async function getAccessToken(clientID: string, secretClient: string){
-    var authParameters = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'grant_type=client_credentials&client_id=' + clientID + '&client_secret=' + secretClient
-    }
-
-    const temp = await fetch('https://accounts.spotify.com/api/token', authParameters)
-    .then(result => result.json())
-    .then(data => data.access_token);
-
-    return temp;
-}
-
 //getting authorization for access to current users account
 /*
 auth flow explained:
@@ -28,25 +11,9 @@ when user allows access the spotify page uses the redirect_uri we
     passed in to send us back to the mixers app
 
 */
-let redirect_uri = "http://localhost:5173/home/";
+const REDIRECT_URI = "http://localhost:5173/home/";
 const AUTHORIZE_URL = "https://accounts.spotify.com/authorize?";
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
-
-const useTokens = () => {
-    const [accessToken, setAccessToken] = useState('');
-    const [refreshToken, setRefreshToken] = useState('');
-
-    useEffect(() => {
-        let lsat = JSON.parse(localStorage.getItem('accessToken'));
-        let lsrt = JSON.parse(localStorage.getItem('refreshToken'));
-        if(lsat === null){
-        //get tokens
-        }else{
-        setAccessToken(lsat);
-        setRefreshToken(lsrt)
-        }
-    }, []);
-}
 
 function requestAuthorization(){
     //scopes are permissions we want
@@ -63,10 +30,134 @@ function requestAuthorization(){
     let url = AUTHORIZE_URL;
     url += "client_id=" + clientID;
     url += "&response_type=code";
-    url += "&redirect_uri=" + encodeURI(redirect_uri);
+    url += "&redirect_uri=" + encodeURI(REDIRECT_URI);
     url += "&show_dialog=true";
     url += "&scope=" + scopes.join(HTML_URL_SPACE_ENCODING);
     window.location.href = url;   
+}
+
+const useTokens = () => {
+    const [accessToken, setAccess] = useState<string>('');
+    const [refreshToken, setRefresh] = useState<string>('');
+    const [isPending, setIsPending] = useState<any>(true);
+    const [error, setError] = useState<any>(null);
+
+    useEffect(() => {
+        const abortCont = new AbortController();
+        let lsat = JSON.parse(localStorage.getItem('accessToken'));
+        let lsrt = JSON.parse(localStorage.getItem('refreshToken'));
+        if(lsat !== null){
+            setAccess(lsat);
+            setRefresh(lsrt);
+            setIsPending(false);
+            setError(null);
+        }else{
+            let authParameters = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Basic ' + btoa(clientID + ':' + secretClient)
+                },
+                body: ('grant_type=authorization_code' 
+                    + '&code=' + getCode()
+                    + '&redirect_uri=' + encodeURI(REDIRECT_URI)
+                    + '&client_id=' + clientID
+                    + "&client_secret=" + secretClient),
+                signal: abortCont.signal
+            }
+            fetch(TOKEN_URL, authParameters)
+                .then(result => {
+                    if(!result.ok){
+                        throw Error('could not fetch data for that resource');
+                    }
+                    return result.json()
+                }).then(data => {
+                    setAccess(data.access_token);
+                    console.log("access_token: " + data.access_token);
+                    setRefresh(data.access_token);
+                    console.log("refresh_token: " + data.refresh_token);
+                    window.history.pushState("", "", REDIRECT_URI);
+                    setIsPending(false);
+                    setError(null);
+                }).catch(err => {
+                    if(err.name === 'AbortError'){
+                        console.log('fetch aborted');
+                    }else{
+                        setIsPending(false);
+                        setError(err.message);
+                    }
+                });
+            
+            // let body = 'grant_type=authorization_code';
+            // body += "&code=" + getCode();
+            // body += "&redirect_uri=" + encodeURI(REDIRECT_URI);
+            // body += "&client_id=" + clientID;
+            // body += "&client_secret=" + secretClient;
+            // console.log('body is: ' + body);
+            // let xhr = new XMLHttpRequest();
+            // xhr.open("POST", TOKEN_URL, true);
+            // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            // xhr.setRequestHeader('Authorization', 'Basic ' + btoa(clientID + ':' + secretClient));
+            // xhr.send(body);
+            // xhr.onload = () => {
+            //     //handleAuthorizationResponse
+            //     if( xhr.status == 200){
+            //         let data = JSON.parse(xhr.responseText);
+            //         console.log(data);
+            //         setIsPending(false);
+            //         setError(null);
+            //         if(data.access_token != undefined){
+            //             //access_token = data.access_token;
+            //             //localStorage.setItem("access_token", data.access_token);
+            //             setAccess(data.access_token);
+            //             console.log("access_token: " + data.access_token);
+            //         }
+            //         if(data.refresh_token != undefined ){
+            //             //refresh_token = data.refresh_token;
+            //             //localStorage.setItem("refresh_token", data.refresh_token);
+            //             setRefresh(data.refresh_token); 
+            //             console.log("refresh_token: " + data.refresh_token);
+            //         }
+            //     }else{
+            //         console.log(xhr.responseText);
+            //         alert(xhr.responseText);
+            //     }
+            // };
+            // //window.history.pushState("", "", REDIRECT_URI);
+        }
+        return () => abortCont.abort();
+    }, []);
+    return {accessToken, refreshToken, isPending, error};
+}
+
+const useSpotifyXHR = (method: string, url: string, body: string | null, ARTokens: any) => {
+    const [data, setData] = useState<any>(null);
+    const [isPending, setIsPending] = useState<any>(true);
+    const [error, setError] = useState<any>(null);
+
+    useEffect(() => {
+        let xhr = new XMLHttpRequest();
+        xhr.open(method, url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('Authorization', 'Bearer ' + ARTokens[0])
+        xhr.send(body);
+        xhr.onload = () => {
+            if(xhr.status == 200){
+                var data = JSON.parse(xhr.responseText);
+                console.log(data);
+                setData(data);
+                setIsPending(false);
+            }else{
+                //201 bad or expires token
+                //403 bad oauth request
+                //429 app has exceeded rate limits
+                console.log(xhr.responseText);
+                alert(xhr.responseText);
+                setError(xhr.responseText)
+            }
+        };
+    }, []);
+    return {data, isPending, error};
 }
 
 function onPageLoad(setTokensFunc: Function){
@@ -78,14 +169,14 @@ function onPageLoad(setTokensFunc: Function){
 function handleRedirect(setTokensFunc: Function){
     let code = getCode();
     fetchAccessToken(setTokensFunc, code);
-    window.history.pushState("", "", redirect_uri);
+    window.history.pushState("", "", REDIRECT_URI);
 }
 
 function fetchAccessToken(setTokensFunc: Function, code: string | null){
     let body = 'grant_type=authorization_code';
     body += "&code=" + code;
-    body += "&redirect_uri=" + encodeURI(redirect_uri);
-    body += "&client_id" + clientID;
+    body += "&redirect_uri=" + encodeURI(REDIRECT_URI);
+    body += "&client_id=" + clientID;
     body += "&client_secret=" + secretClient;
     return callAuthorizationAPI(setTokensFunc, body)
 }
@@ -130,6 +221,7 @@ function getCode(){
     if(queryString.length > 0){
         const urlParams = new URLSearchParams(queryString);
         code = urlParams.get('code');
+        console.log('code is: ' + code);
     }
     return code;
 }
@@ -173,4 +265,4 @@ function callAPI(method: string, url: string, body: string|null, callback: Funct
 }
 
 
-export {getAccessToken, requestAuthorization, onPageLoad, getPlaylists};
+export {requestAuthorization, useTokens};

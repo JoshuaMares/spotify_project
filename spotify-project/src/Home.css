@@ -1,3 +1,7 @@
+.Home{
+    height: 100%;
+}
+
 .Library-Info{
     display: flex;
     flex-direction: row;
@@ -10,4 +14,24 @@
 
 .ASDF{
     color: var(--spotify-white);
+}
+
+.Buttons-Container{
+    position: sticky;
+    bottom: 0;
+    background-color: var(--spotify-grey);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.Buttons{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.Buttons, .Buttons p, .Buttons-Icon{
+    background-color: transparent;
 }

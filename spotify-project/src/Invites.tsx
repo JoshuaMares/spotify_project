@@ -2,7 +2,7 @@
 const Invites = () => {
     return ( 
         <div className="Invites">
-            <p style={{'color': 'white'}}>Check back later!</p>
+            <p style={{'color': 'white', 'height': '100%'}}>Check back later!</p>
         </div>
     );
 }

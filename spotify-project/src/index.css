@@ -1,4 +1,4 @@
-html, body, #app, #app>div{
+html, body, #app, #app>div, #root, .App, .Content{
   height: 100%;
   width: 100%;
 }

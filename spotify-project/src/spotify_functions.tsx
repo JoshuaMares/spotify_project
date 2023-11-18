@@ -2,18 +2,19 @@ import {clientID, secretClient} from "../../spotify_keys.ts"
 import {useState, useEffect } from "react";
 const HTML_URL_SPACE_ENCODING = '%20';
 
-//getting authorization for access to current users account
 /*
 auth flow explained:
 build custom auth request url using keys
 clicking button redirects user to spotifies page
 when user allows access the spotify page uses the redirect_uri we
-    passed in to send us back to the mixers app
-
+    passed in to send us back to the mixers app with authorization code
+then take code and use it to request access and refresh token
 */
-const REDIRECT_URI = "http://localhost:5173/home/";
-const AUTHORIZE_URL = "https://accounts.spotify.com/authorize?";
-const TOKEN_URL = "https://accounts.spotify.com/api/token";
+
+const REDIRECT_URI = 'http://localhost:5173/';
+const HOME_URL = 'http://localhost:5173/home/';
+const AUTHORIZE_URL = 'https://accounts.spotify.com/authorize?';
+const TOKEN_URL = 'https://accounts.spotify.com/api/token';
 
 function requestAuthorization(){
     //scopes are permissions we want
@@ -36,183 +37,75 @@ function requestAuthorization(){
     window.location.href = url;   
 }
 
-const useTokens = () => {
-    const [accessToken, setAccess] = useState<string>('');
-    const [refreshToken, setRefresh] = useState<string>('');
-    const [isPending, setIsPending] = useState<any>(true);
-    const [error, setError] = useState<any>(null);
-
-    useEffect(() => {
-        const abortCont = new AbortController();
-        let lsat = JSON.parse(localStorage.getItem('accessToken'));
-        let lsrt = JSON.parse(localStorage.getItem('refreshToken'));
-        if(lsat !== null){
-            setAccess(lsat);
-            setRefresh(lsrt);
-            setIsPending(false);
-            setError(null);
-        }else{
-            let authParameters = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Basic ' + btoa(clientID + ':' + secretClient)
-                },
-                body: ('grant_type=authorization_code' 
-                    + '&code=' + getCode()
-                    + '&redirect_uri=' + encodeURI(REDIRECT_URI)
-                    + '&client_id=' + clientID
-                    + "&client_secret=" + secretClient),
-                signal: abortCont.signal
-            }
-            fetch(TOKEN_URL, authParameters)
-                .then(result => {
-                    if(!result.ok){
-                        throw Error('could not fetch data for that resource');
-                    }
-                    return result.json()
-                }).then(data => {
-                    setAccess(data.access_token);
-                    console.log("access_token: " + data.access_token);
-                    setRefresh(data.access_token);
-                    console.log("refresh_token: " + data.refresh_token);
-                    window.history.pushState("", "", REDIRECT_URI);
-                    setIsPending(false);
-                    setError(null);
-                }).catch(err => {
-                    if(err.name === 'AbortError'){
-                        console.log('fetch aborted');
-                    }else{
-                        setIsPending(false);
-                        setError(err.message);
-                    }
-                });
-            
-            // let body = 'grant_type=authorization_code';
-            // body += "&code=" + getCode();
-            // body += "&redirect_uri=" + encodeURI(REDIRECT_URI);
-            // body += "&client_id=" + clientID;
-            // body += "&client_secret=" + secretClient;
-            // console.log('body is: ' + body);
-            // let xhr = new XMLHttpRequest();
-            // xhr.open("POST", TOKEN_URL, true);
-            // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            // xhr.setRequestHeader('Authorization', 'Basic ' + btoa(clientID + ':' + secretClient));
-            // xhr.send(body);
-            // xhr.onload = () => {
-            //     //handleAuthorizationResponse
-            //     if( xhr.status == 200){
-            //         let data = JSON.parse(xhr.responseText);
-            //         console.log(data);
-            //         setIsPending(false);
-            //         setError(null);
-            //         if(data.access_token != undefined){
-            //             //access_token = data.access_token;
-            //             //localStorage.setItem("access_token", data.access_token);
-            //             setAccess(data.access_token);
-            //             console.log("access_token: " + data.access_token);
-            //         }
-            //         if(data.refresh_token != undefined ){
-            //             //refresh_token = data.refresh_token;
-            //             //localStorage.setItem("refresh_token", data.refresh_token);
-            //             setRefresh(data.refresh_token); 
-            //             console.log("refresh_token: " + data.refresh_token);
-            //         }
-            //     }else{
-            //         console.log(xhr.responseText);
-            //         alert(xhr.responseText);
-            //     }
-            // };
-            // //window.history.pushState("", "", REDIRECT_URI);
-        }
-        return () => abortCont.abort();
-    }, []);
-    return {accessToken, refreshToken, isPending, error};
+function getLocalStorageAccessToken(){
+    let lsat = localStorage.getItem('accessToken');
+    if(lsat !== null){
+        return lsat;
+    }else{
+        window.location.href = REDIRECT_URI;
+        return '';
+    }
 }
 
-const useSpotifyXHR = (method: string, url: string, body: string | null, ARTokens: any) => {
+const useSpotify = (url: string, method: string, body: string | null) => {
     const [data, setData] = useState<any>(null);
     const [isPending, setIsPending] = useState<any>(true);
     const [error, setError] = useState<any>(null);
 
     useEffect(() => {
-        let xhr = new XMLHttpRequest();
-        xhr.open(method, url, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Authorization', 'Bearer ' + ARTokens[0])
-        xhr.send(body);
-        xhr.onload = () => {
-            if(xhr.status == 200){
-                var data = JSON.parse(xhr.responseText);
-                console.log(data);
-                setData(data);
-                setIsPending(false);
-            }else{
-                //201 bad or expires token
-                //403 bad oauth request
-                //429 app has exceeded rate limits
-                console.log(xhr.responseText);
-                alert(xhr.responseText);
-                setError(xhr.responseText)
-            }
+        let accessToken = getLocalStorageAccessToken();
+        if(accessToken == ''){
+            return () => console.log('cannot find access token, going to login for oauth');
+        }
+        const abortCont = new AbortController();
+        let authParameters = {
+            'method': method,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Authorization': ('Bearer ' + accessToken)
+            },
+            'body': body,
+            signal: abortCont.signal
         };
+        spotifyAPI(url, authParameters, {data, setData, isPending, setIsPending, error, setError});
+        return () => abortCont.abort();
     }, []);
+
     return {data, isPending, error};
 }
 
-function onPageLoad(setTokensFunc: Function){
+function spotifyAPI(url: string, authParameters: any, stateObject: any){
+    fetch(url, authParameters)
+        .then(result => {
+            if(!result.ok){
+                throw Error('could not fetch data for that resource');
+            }
+            return result.json()
+        }).then(data => {
+            stateObject.setData(data);
+            console.log('data: ' + data);
+            stateObject.setIsPending(false);
+            stateObject.setError(null);
+        }).catch(err => {
+            if(err.name === 'AbortError'){
+                console.log('fetch aborted');
+            }else{
+                stateObject.setData(null)
+                stateObject.setIsPending(false);
+                stateObject.setError(err.message);
+            }
+        });
+}
+
+function onPageLoad(){
     if(window.location.search.length > 0){
-        handleRedirect(setTokensFunc);
+        handleRedirect();
     }
 }
 
-function handleRedirect(setTokensFunc: Function){
+function handleRedirect(){
     let code = getCode();
-    fetchAccessToken(setTokensFunc, code);
-    window.history.pushState("", "", REDIRECT_URI);
-}
-
-function fetchAccessToken(setTokensFunc: Function, code: string | null){
-    let body = 'grant_type=authorization_code';
-    body += "&code=" + code;
-    body += "&redirect_uri=" + encodeURI(REDIRECT_URI);
-    body += "&client_id=" + clientID;
-    body += "&client_secret=" + secretClient;
-    return callAuthorizationAPI(setTokensFunc, body)
-}
-
-function callAuthorizationAPI(body: string){
-    let accessToken = null;
-    let refreshToken = null;
-
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", TOKEN_URL, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.setRequestHeader('Authorization', 'Basic ' + btoa(clientID + ':' + secretClient));
-    xhr.send(body);
-    xhr.onload = () => {
-        //handleAuthorizationResponse
-        if( xhr.status == 200){
-            let data = JSON.parse(xhr.responseText);
-            console.log(data);
-            if(data.access_token != undefined){
-                //access_token = data.access_token;
-                //localStorage.setItem("access_token", data.access_token);
-                access_token = data.access_token;
-                console.log("access_token: " + data.access_token);
-            }
-            if(data.refresh_token != undefined ){
-                //refresh_token = data.refresh_token;
-                //localStorage.setItem("refresh_token", data.refresh_token);
-                refresh_token = data.refresh_token; 
-                console.log("refresh_token: " + data.refresh_token);
-            }
-            //onPageLoad();
-        }else{
-            console.log(xhr.responseText);
-            alert(xhr.responseText);
-        }
-    }
+    fetchAccessToken(code);
 }
 
 function getCode(){
@@ -226,43 +119,37 @@ function getCode(){
     return code;
 }
 
-
-//actual api calls
-function getPlaylists(accessToken: string, setPlaylistsFunction: Function){
-    callAPI('GET', 'https://api.spotify.com/v1/me/playlists?offset=0&limit=50', null, handlePlaylistResponse, accessToken, setPlaylistsFunction);
-}
-
-function mixPlaylists(access_token: string, playlists: Array){
-    //create playlists
-    //let playlist_id = createPlaylist(access_token);
-    //populate playlists
-}
-
-function handlePlaylistResponse(xhr: any, setPlaylistsFunction: Function){
-    if(xhr.status == 200){
-        var data = JSON.parse(xhr.responseText);
-        console.log(data);
-        setPlaylistsFunction(data.items);
-        // data.items.forEach( (item: any) => {
-        //     console.log(item.name);
-        // });
-    }else if(xhr.status == 401){
-        //refreshAccessToken();
-    }else{
-        console.log(xhr.responseText);
-        alert(xhr.responseText);
+function fetchAccessToken(code: string | null){
+    let authParameters = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Basic ' + btoa(clientID + ':' + secretClient)
+        },
+        body: ('grant_type=authorization_code' 
+            + '&code=' + code
+            + '&redirect_uri=' + encodeURI(REDIRECT_URI)
+            + '&client_id=' + clientID
+            + "&client_secret=" + secretClient),
+        //signal: abortCont.signal
     }
-    
+    fetch(TOKEN_URL, authParameters)
+        .then(result => {
+            if(!result.ok){
+                throw Error('could not fetch data for that resource');
+            }
+            return result.json()
+        }).then(data => {
+            localStorage.setItem("accessToken", data.access_token);
+            console.log("accessToken: " + data.access_token);
+            localStorage.setItem("refreshToken", data.refreshToken);
+            console.log("refreshToken: " + data.refresh_token);
+            window.location.href = HOME_URL; 
+            //window.history.pushState("", "", REDIRECT_URI);
+        }).catch(err => {
+            console.log(err.message);
+            alert(err.message);
+        });
 }
 
-function callAPI(method: string, url: string, body: string|null, callback: Function, accessToken: string, setPlaylistsFunction: Function){
-    let xhr = new XMLHttpRequest();
-    xhr.open(method, url, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken)
-    xhr.send(body);
-    xhr.onload = () => {callback(xhr, setPlaylistsFunction)};
-}
-
-
-export {requestAuthorization, useTokens};
+export {requestAuthorization, onPageLoad, useSpotify};

@@ -3,16 +3,13 @@ import { useEffect } from "react";
 import Navbar from "./Navbar.tsx";
 import Landing from "./Landing.tsx";
 import Home from "./Home.tsx"
-import { onPageLoad } from './spotify_functions.tsx';
+import { useTokens } from './spotify_functions.tsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
 function App(){
-
-  useEffect(() => {
-    onPageLoad();
-  }, []);
-
+  useTokens();
+  
   return (
     <Router>
       <div className="App">

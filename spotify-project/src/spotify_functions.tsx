@@ -37,6 +37,50 @@ function requestAuthorization(){
     window.location.href = url;   
 }
 
+function useTokens(){
+    useEffect(() => {
+        if(window.location.search.length > 0){
+            let code = getCode();
+            const abortCont = new AbortController();
+            let authParameters = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Basic ' + btoa(clientID + ':' + secretClient)
+                },
+                body: ('grant_type=authorization_code' 
+                    + '&code=' + code
+                    + '&redirect_uri=' + encodeURI(REDIRECT_URI)
+                    + '&client_id=' + clientID
+                    + "&client_secret=" + secretClient),
+                signal: abortCont.signal
+            }
+            fetch(TOKEN_URL, authParameters)
+            .then(result => {
+                if(!result.ok){
+                    throw Error('could not fetch data for that resource');
+                }
+                return result.json()
+            }).then(data => {
+                localStorage.setItem("accessToken", data.access_token);
+                console.log("accessToken: " + data.access_token);
+                localStorage.setItem("refreshToken", data.refreshToken);
+                console.log("refreshToken: " + data.refresh_token);
+                window.location.href = HOME_URL; 
+                //window.history.pushState("", "", REDIRECT_URI);
+            }).catch(err => {
+                if(err.name === 'AbortError'){
+                    console.log('fetch aborted');
+                }else{
+                    console.log(err.message);
+                    alert(err.message);
+                }
+            });
+            return () => abortCont.abort();
+        }
+    }, []);
+}
+
 function getLocalStorageAccessToken(){
     let lsat = localStorage.getItem('accessToken');
     if(lsat !== null){
@@ -65,7 +109,7 @@ const useSpotify = (url: string, method: string, body: string | null) => {
                 'Authorization': ('Bearer ' + accessToken)
             },
             'body': body,
-            signal: abortCont.signal
+            'signal': abortCont.signal
         };
         spotifyAPI(url, authParameters, {data, setData, isPending, setIsPending, error, setError});
         return () => abortCont.abort();
@@ -97,17 +141,6 @@ function spotifyAPI(url: string, authParameters: any, stateObject: any){
         });
 }
 
-function onPageLoad(){
-    if(window.location.search.length > 0){
-        handleRedirect();
-    }
-}
-
-function handleRedirect(){
-    let code = getCode();
-    fetchAccessToken(code);
-}
-
 function getCode(){
     let code = null;
     const queryString = window.location.search;
@@ -119,37 +152,4 @@ function getCode(){
     return code;
 }
 
-function fetchAccessToken(code: string | null){
-    let authParameters = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic ' + btoa(clientID + ':' + secretClient)
-        },
-        body: ('grant_type=authorization_code' 
-            + '&code=' + code
-            + '&redirect_uri=' + encodeURI(REDIRECT_URI)
-            + '&client_id=' + clientID
-            + "&client_secret=" + secretClient),
-        //signal: abortCont.signal
-    }
-    fetch(TOKEN_URL, authParameters)
-        .then(result => {
-            if(!result.ok){
-                throw Error('could not fetch data for that resource');
-            }
-            return result.json()
-        }).then(data => {
-            localStorage.setItem("accessToken", data.access_token);
-            console.log("accessToken: " + data.access_token);
-            localStorage.setItem("refreshToken", data.refreshToken);
-            console.log("refreshToken: " + data.refresh_token);
-            window.location.href = HOME_URL; 
-            //window.history.pushState("", "", REDIRECT_URI);
-        }).catch(err => {
-            console.log(err.message);
-            alert(err.message);
-        });
-}
-
-export {requestAuthorization, onPageLoad, useSpotify};
+export {requestAuthorization, useTokens, useSpotify};

@@ -32,6 +32,9 @@
 
 * {
   box-sizing: border-box;
+}
+
+.App{
   background-color: var(--spotify-black);
 }
 

@@ -1,3 +1,4 @@
+import { json } from "react-router-dom";
 import {clientID, secretClient} from "../../spotify_keys.ts"
 import {useState, useEffect } from "react";
 const HTML_URL_SPACE_ENCODING = '%20';
@@ -11,8 +12,9 @@ when user allows access the spotify page uses the redirect_uri we
 then take code and use it to request access and refresh token
 */
 
-const REDIRECT_URI = 'http://localhost:5173/';
+const REDIRECT_URI = 'http://localhost:5173/loading/';
 const HOME_URL = 'http://localhost:5173/home/';
+const LANDING_URL = 'http://localhost:5173/';
 const AUTHORIZE_URL = 'https://accounts.spotify.com/authorize?';
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
 
@@ -70,7 +72,7 @@ function useTokens(){
                 //window.history.pushState("", "", REDIRECT_URI);
             }).catch(err => {
                 if(err.name === 'AbortError'){
-                    console.log('fetch aborted');
+                    console.log('fetch aborted while getting tokens');
                 }else{
                     console.log(err.message);
                     alert(err.message);
@@ -86,7 +88,7 @@ function getLocalStorageAccessToken(){
     if(lsat !== null){
         return lsat;
     }else{
-        window.location.href = REDIRECT_URI;
+        window.location.href = LANDING_URL;
         return '';
     }
 }
@@ -95,8 +97,17 @@ const useSpotify = (url: string, method: string, body: string | null) => {
     const [data, setData] = useState<any>(null);
     const [isPending, setIsPending] = useState<any>(true);
     const [error, setError] = useState<any>(null);
+    
+    let spotifyObject = {data, setData, isPending, setIsPending, error, setError};
 
     useEffect(() => {
+        if(data && !data.next){
+            //if we already have the data and there is no more data to grab
+            return () => console.log('no more data to grab');
+        }else if(data && data.next){
+            //we have already gotten some data but still need more
+            url = data.next;
+        }
         let accessToken = getLocalStorageAccessToken();
         if(accessToken == ''){
             return () => console.log('cannot find access token, going to login for oauth');
@@ -111,11 +122,11 @@ const useSpotify = (url: string, method: string, body: string | null) => {
             'body': body,
             'signal': abortCont.signal
         };
-        spotifyAPI(url, authParameters, {data, setData, isPending, setIsPending, error, setError});
+        spotifyAPI(url, authParameters, spotifyObject);
         return () => abortCont.abort();
-    }, []);
+    }, [data]);
 
-    return {data, isPending, error};
+    return {data, setData, isPending, setIsPending, error, setError};
 }
 
 function spotifyAPI(url: string, authParameters: any, stateObject: any){
@@ -126,13 +137,20 @@ function spotifyAPI(url: string, authParameters: any, stateObject: any){
             }
             return result.json()
         }).then(data => {
-            stateObject.setData(data);
-            console.log('data: ' + data);
+            if(stateObject.data && data.items){
+                stateObject.setData((prevState: any) => ({
+                    ...data,
+                    'items': (prevState.items.concat(data.items))
+                }))
+            }else{
+                stateObject.setData(data);
+            }
+            console.log('data: ' + JSON.stringify(data));
             stateObject.setIsPending(false);
             stateObject.setError(null);
         }).catch(err => {
             if(err.name === 'AbortError'){
-                console.log('fetch aborted');
+                console.log('fetch aborted while calling spotify api');
             }else{
                 stateObject.setData(null)
                 stateObject.setIsPending(false);

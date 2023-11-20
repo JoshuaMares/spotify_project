@@ -5,6 +5,40 @@
     border: none;
 }
 
+.Library-Info{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: larger;
+    padding: 10px 5px;
+    background-color: var(--spotify-dark-grey);
+    border-bottom: 1px solid var(--spotify-grey);
+}
+
+.Banner-Container{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    border: none;
+    width: 65%;
+}
+
+.Mix-Button-Container{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 10%;
+}
+
+.Mix-Button{
+    font-size: larger;
+    color: var(--spotify-white);
+    background-color: var(--spotify-green);
+    border-radius: 50%;
+    padding: 5px;
+}
+
 .Search-Bar{
     position: sticky;
     top: 73px;

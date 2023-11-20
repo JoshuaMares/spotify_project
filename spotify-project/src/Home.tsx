@@ -9,20 +9,16 @@ import Invites from './Invites';
 import Playlists from './Playlists';
 
 const Home = () => {
-    const {data: playlists, isPending, error} = useSpotify('https://api.spotify.com/v1/me/playlists', 'GET', null);
+    const userInfoObject = useSpotify('https://api.spotify.com/v1/me', 'GET', null);
+    const playlistObject = useSpotify('https://api.spotify.com/v1/me/playlists', 'GET', null);
     const [window, setWindow] = useState('invites');
 
     return (  
         <div className="Home">
-            <div className="Library-Info">
-                <p className="Banner">My Playlists</p>
-                <FontAwesomeIcon icon={faArrowsSpin} className='ASDF'/>
-            </div>
-
-            {error && <Error error={error}/>}
-            {isPending && <Loading/>}
+            {playlistObject.error && <Error error={playlistObject.error}/>}
+            {playlistObject.isPending && <Loading/>}
             {window == 'invites' && <Invites/>}
-            {playlists && window == 'library' && <Playlists playlists={playlists.items}/>}
+            {playlistObject.data && window == 'library' && <Playlists userInfoObject={userInfoObject} playlistObject={playlistObject}/>}
 
             <div className="Buttons-Container">
                 <div className="Buttons Invites" onClick={() => setWindow('invites')}>

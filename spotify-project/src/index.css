@@ -1,5 +1,6 @@
 html, body, #app, #app>div, #root, .App, .Content{
-  height: 100%;
+  height: auto;
+  min-height: 100vh;
   width: 100%;
 }
 

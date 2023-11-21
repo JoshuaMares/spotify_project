@@ -22,6 +22,18 @@ const Playlists = ({userInfoObject, playlistObject}) => {
         }));
     }
 
+    function mixPlaylists(){
+        let selectedPlaylists = playlistObject.data.items.filter((playlist: any) => playlist.selected)
+                            .map((playlist: any) => {
+                                return {
+                                    'name': playlist.name,
+                                    'id': playlist.id
+                                }
+                            });
+        console.log('playlists to mix:' + JSON.stringify(selectedPlaylists));
+        //form a url from these
+    }
+
     return (
         <div className="Playlists">
             <div className="Library-Info">
@@ -34,7 +46,7 @@ const Playlists = ({userInfoObject, playlistObject}) => {
                     <p className="Banner">{userInfoObject.data.display_name}'s playlists</p>
                 </div>
                 <div className="Mix-Button-Container">
-                    <FontAwesomeIcon icon={faArrowsSpin} className='Mix-Button'/>
+                    <FontAwesomeIcon icon={faArrowsSpin} className='Mix-Button' onClick={mixPlaylists}/>
                 </div>
             </div>
 

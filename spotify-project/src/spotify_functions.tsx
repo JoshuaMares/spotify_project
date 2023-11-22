@@ -96,13 +96,15 @@ function getLocalStorageAccessToken(){
 const useSpotify = (url: string, method: string, body: string | null) => {
     const [data, setData] = useState<any>(null);
     const [isPending, setIsPending] = useState<any>(true);
+    const [isFinished, setIsFinished] = useState<any>(false);
     const [error, setError] = useState<any>(null);
     
-    let spotifyObject = {data, setData, isPending, setIsPending, error, setError};
+    let spotifyObject = {data, setData, isPending, setIsPending, isFinished, setIsFinished, error, setError};
 
     useEffect(() => {
         if(data && !data.next){
             //if we already have the data and there is no more data to grab
+            setIsFinished(true);
             return () => console.log('no more data to grab');
         }else if(data && data.next){
             //we have already gotten some data but still need more
@@ -126,7 +128,7 @@ const useSpotify = (url: string, method: string, body: string | null) => {
         return () => abortCont.abort();
     }, [data]);
 
-    return {data, setData, isPending, setIsPending, error, setError};
+    return spotifyObject;
 }
 
 function spotifyAPI(url: string, authParameters: any, stateObject: any){

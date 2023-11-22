@@ -1,6 +1,6 @@
 import './Home.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope, faPlus, faSwatchbook, faShuffle, faArrowsSpin} from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope, faSwatchbook } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react';
 import { useSpotify } from './spotify_functions';
 import Loading from './Loading';

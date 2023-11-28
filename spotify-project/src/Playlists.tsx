@@ -3,10 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faArrowsSpin} from '@fortawesome/free-solid-svg-icons'
 import {useState, useEffect} from "react";
 import { useSpotify } from './spotify_functions';
+import { useNavigate } from "react-router-dom";
 
 const Playlists = ({userInfoObject, playlistObject}) => {
     //const [playlists, setPlaylists] = useState([]);
     const [searchQuery, setSearch] = useState('');
+    const navigate = useNavigate();
 
     function selectPlaylist(index: number){
         let playlists = playlistObject.data.items;
@@ -32,19 +34,7 @@ const Playlists = ({userInfoObject, playlistObject}) => {
                                 }
                             });
         console.log('playlists to mix:' + JSON.stringify(selectedPlaylists));
-        let playlistInfoArray = selectedPlaylists.map((playlist: any) => {
-            useSpotify(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, 'GET', null);
-        })
-        while(1){
-            if(playlistInfoArray.filter((playlistObject: any) => {return playlistObject.isFinished}).length == playlistInfoArray.length){
-                break;
-            }
-        }
-        playlistInfoArray.forEach((playlistObject: any, index: number) => {
-            console.log('printing out songs for ' + selectedPlaylists[index].name);
-            //playlistObject.
-        });
-        //form a url from these
+        navigate('/mixers', {'state': selectedPlaylists});
     }
 
     return (

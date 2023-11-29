@@ -95,8 +95,8 @@ function getLocalStorageAccessToken(){
 
 const useSpotify = (url: string, method: string, body: string | null) => {
     const [data, setData] = useState<any>(null);
-    const [isPending, setIsPending] = useState<any>(true);
-    const [isFinished, setIsFinished] = useState<any>(false);
+    const [isPending, setIsPending] = useState<boolean>(true);
+    const [isFinished, setIsFinished] = useState<boolean>(false);
     const [error, setError] = useState<any>(null);
     
     let spotifyObject = {data, setData, isPending, setIsPending, isFinished, setIsFinished, error, setError};

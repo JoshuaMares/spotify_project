@@ -1,23 +1,31 @@
 import { useLocation } from "react-router-dom";
+import { useSpotify } from "./spotify_functions";
+
 const MixDetails = (props: any) => {
     const location = useLocation();
-    console.log(location);
-    // let playlistInfoArray = selectedPlaylists.map((playlist: any) => {
-    //     useSpotify(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, 'GET', null);
-    // })
+    console.log(location.state);
+    let playlistTracksObjects = location.state.map((playlist: any) => {
+        return useSpotify(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, 'GET', null);
+    })
+    console.log('playlist tracks objects: ' + JSON.stringify(playlistTracksObjects));
     // while(1){
-    //     if(playlistInfoArray.filter((playlistObject: any) => {return playlistObject.isFinished}).length == playlistInfoArray.length){
+    //     console.log('still checkin');
+    //     if(playlistTracksObjects.filter((tracksObject: any) => {return tracksObject.isFinished}).length == playlistTracksObjects.length){
+    //         console.log('no longer checkin');
     //         break;
     //     }
     // }
-    // playlistInfoArray.forEach((playlistObject: any, index: number) => {
-    //     console.log('printing out songs for ' + selectedPlaylists[index].name);
-    //     //playlistObject.
-    // });
-    // //form a url from these
+     playlistTracksObjects.forEach((tracksObject: any, index: number) => {
+        console.log('printing out songs for ' + location.state[index].name);
+        console.log(tracksObject.data.items);
+    });
+    //loop through in return instead
+    //form a url from these
 
     return ( 
-        <div className="MixDetails"></div>
+        <div className="MixDetails">
+            
+        </div>
     );
 }
  

@@ -1,0 +1,57 @@
+.PlaylistName{
+    background-color: var(--spotify-light-grey);
+}
+
+.Info-Container{
+    display: flex;
+    flex-direction: row;
+    height: calc(0.15 * var(--img-dims));
+}
+
+.Mix-Image-Container{
+    width: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Mix-Image-Container input::placeholder{
+    background-color: var(--spotify-grey);
+    color: var(--spotify-white);
+}
+
+.Text-Container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    gap: 5px;
+}
+
+.Text-Container input{
+    border: none;
+    color: var(--spotify-white);
+    font-size: large;
+}
+
+.Text-Container input::placeholder{
+    color: var(--spotify-white);
+}
+
+.Mix-Button-Container{
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    height: calc(0.125 * var(--img-dims));
+}
+
+.Mix-Button{
+    background-color: var(--spotify-green);
+    height: 95%;
+    width: 95%;
+    border: none;
+    border-radius: 10px;
+}

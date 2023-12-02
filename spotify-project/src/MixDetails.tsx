@@ -1,3 +1,4 @@
+import './MixDetails.css';
 import {useState} from "react"
 import { useLocation } from "react-router-dom";
 import { useSpotify } from "./spotify_functions";
@@ -13,6 +14,10 @@ const MixDetails = (props: any) => {
         return useSpotify(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, 'GET', null);
     })
     //console.log('playlist tracks objects: ' + JSON.stringify(playlistTracksObjects));
+
+    function createMix(){
+
+    }
 
     return ( 
         <div className="MixDetails">
@@ -41,6 +46,9 @@ const MixDetails = (props: any) => {
                         )
                     }
                 })}
+                <div className="Mix-Button-Container">
+                    <button className="Mix-Button">Mix</button>
+                </div>
             </form>
         </div>
     );

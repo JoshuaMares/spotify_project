@@ -6,7 +6,7 @@ import { useSpotify } from "./spotify_functions";
 const MixDetails = (props: any) => {
     const [mixName, setName] = useState('My Mix');
     const [mixDesc, setDesc] = useState('Sickest Mix since pb & j');
-    const [mixImage, setImage] = useState('');
+    const [mixImage, setImage] = useState();
 
     const location = useLocation();
     console.log(location.state);
@@ -19,13 +19,18 @@ const MixDetails = (props: any) => {
 
     }
 
+    function fileSelectHandler(event: any){
+        console.log(event.target.files[0]);
+        setImage(event.target.files[0]);
+    }
+
     return ( 
         <div className="MixDetails">
             <form className="Mix-Info" onSubmit={createMix}>
                 <div className="Info-Container">
                     <div className="Mix-Image-Container">
-                        {mixImage && <img src="mixImage" alt="chosen mix image"/>}
-                        <input type="file" className="Mix-Image" value={mixImage} onChange={(e) => {console.log(e.target.value);setImage(e.target.value)}} accept="image/*"/>
+                        {mixImage && <img src={URL.createObjectURL(mixImage)} alt="chosen mix image"/>}
+                        <input type="file" className="Mix-Image" onChange={fileSelectHandler} accept="image/*"/>
                     </div>
                     <div className="Text-Container">
                         <input type="text" className="Mix-Name" value={mixName} onChange={(e) => setName(e.target.value)} placeholder="Name" autoComplete="off" required/>

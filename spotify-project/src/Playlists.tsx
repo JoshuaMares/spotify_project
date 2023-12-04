@@ -48,8 +48,8 @@ const Playlists = ({userInfoObject, playlistObject}) => {
                 <div className="Banner-Container">
                     <p className="Banner">{userInfoObject.data.display_name}'s playlists</p>
                 </div>
-                <div className="Mix-Button-Container">
-                    <FontAwesomeIcon icon={faArrowsSpin} className='Mix-Button' onClick={mixPlaylists}/>
+                <div className="Mix-Page-Button-Container">
+                    <FontAwesomeIcon icon={faArrowsSpin} className='Mix-Page-Button' onClick={mixPlaylists}/>
                 </div>
             </div>
 

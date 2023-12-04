@@ -6,7 +6,7 @@ import { useSpotify } from "./spotify_functions";
 const MixDetails = (props: any) => {
     const [mixName, setName] = useState('My Mix');
     const [mixDesc, setDesc] = useState('Sickest Mix since pb & j');
-    const [mixImage, setImage] = useState();
+    //const [mixImage, setImage] = useState(null);
 
     const location = useLocation();
     console.log(location.state);
@@ -15,26 +15,32 @@ const MixDetails = (props: any) => {
     })
     //console.log('playlist tracks objects: ' + JSON.stringify(playlistTracksObjects));
 
-    function createMix(){
-
+    function countUnfinished(){
+        return playlistTracksObjects.map((playlistTracksObject: any) => playlistTracksObject.isFinished ? 0 : 1)
+            .reduce((accumulator: number, currentVal: any) => accumulator + currentVal, 0)
     }
 
-    function fileSelectHandler(event: any){
-        console.log(event.target.files[0]);
-        setImage(event.target.files[0]);
+    function createMix(event: Event){
+        event.preventDefault();
+        //combine playlists here
     }
+
+    // function fileSelectHandler(event: any){
+    //     console.log(event.target.files[0]);
+    //     setImage(event.target.files[0]);
+    // }
 
     return ( 
         <div className="MixDetails">
             <form className="Mix-Info" onSubmit={createMix}>
                 <div className="Info-Container">
-                    <div className="Mix-Image-Container">
-                        {mixImage && <img src={URL.createObjectURL(mixImage)} alt="chosen mix image"/>}
-                        <input type="file" className="Mix-Image" onChange={fileSelectHandler} accept="image/*"/>
-                    </div>
+                    {/* <div className="Mix-Image-Container">
+                        {mixImage && <img className="Mix-Image" src={URL.createObjectURL(mixImage)} alt="chosen mix image"/>}
+                        <input type="file" onChange={fileSelectHandler} accept="image/*"/>
+                    </div> */}
                     <div className="Text-Container">
                         <input type="text" className="Mix-Name" value={mixName} onChange={(e) => setName(e.target.value)} placeholder="Name" autoComplete="off" required/>
-                        <input type="text" className="Mix-Desc" value={mixDesc} onChange={(e) => setDesc(e.target.value)}placeholder="Desc" autoComplete="off" required/>
+                        <input type="text" className="Mix-Desc" value={mixDesc} onChange={(e) => setDesc(e.target.value)} placeholder="Desc" autoComplete="off" required/>
                     </div>
                 </div>
                 {playlistTracksObjects.map((ptObject: any, index: number) =>{
@@ -52,7 +58,10 @@ const MixDetails = (props: any) => {
                     }
                 })}
                 <div className="Mix-Button-Container">
-                    <button className="Mix-Button">Mix</button>
+                    {countUnfinished() 
+                        ? <button className="Wait-Button" onClick={(event) => {event.preventDefault()}}>Loading Music...</button> 
+                        : <button className="Mix-Button">Mix</button> 
+                    }
                 </div>
             </form>
         </div>

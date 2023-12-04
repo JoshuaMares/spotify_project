@@ -24,14 +24,14 @@
     width: 65%;
 }
 
-.Mix-Button-Container{
+.Mix-Page-Button-Container{
     display: flex;
     justify-content: left;
     align-items: center;
     width: 10%;
 }
 
-.Mix-Button{
+.Mix-Page-Button{
     font-size: larger;
     color: var(--spotify-white);
     background-color: var(--spotify-green);

@@ -34,7 +34,7 @@ const Playlists = ({userInfoObject, playlistObject}) => {
                                 }
                             });
         console.log('playlists to mix:' + JSON.stringify(selectedPlaylists));
-        navigate('/mixers', {'state': selectedPlaylists});
+        navigate('/mixers', {'state': {'userID': userInfoObject.data.id, 'playlists': selectedPlaylists}});
     }
 
     return (

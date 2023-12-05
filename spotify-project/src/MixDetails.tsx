@@ -1,16 +1,23 @@
 import './MixDetails.css';
-import {useState} from "react"
-import { useLocation } from "react-router-dom";
+import { useState, useEffect} from "react"
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSpotify } from "./spotify_functions";
 
 const MixDetails = (props: any) => {
     const [mixName, setName] = useState('My Mix');
     const [mixDesc, setDesc] = useState('Sickest Mix since pb & j');
-    //const [mixImage, setImage] = useState(null);
-
+    const navigate = useNavigate();
     const location = useLocation();
     console.log(location.state);
-    let playlistTracksObjects = location.state.map((playlist: any) => {
+
+    useEffect(() => {
+        if(location.state == null){
+            console.log('attempting to navigate to mixdetails without providing data, going home');
+            window.location.href = 'http://localhost:5173/';
+        }
+    }, []);
+
+    let playlistTracksObjects = location.state.playlists.map((playlist: any) => {
         return useSpotify(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, 'GET', null);
     })
     //console.log('playlist tracks objects: ' + JSON.stringify(playlistTracksObjects));
@@ -23,6 +30,15 @@ const MixDetails = (props: any) => {
     function createMix(event: Event){
         event.preventDefault();
         //combine playlists here
+        let songObjectList: any[] = [];
+        playlistTracksObjects.forEach((element: any) => {
+            songObjectList = songObjectList.concat(element.data.items);
+        });
+        let songList = songObjectList.map((element) => {
+            return {'name': element.track.name, 'uri': element.track.uri}
+        });
+        console.log(JSON.stringify(songList));
+        navigate('/creating_playlist', {'state': {'userID': location.state.userID, 'playlistName': mixName, 'playlistDesc': mixDesc, 'songList': songList}});
     }
 
     // function fileSelectHandler(event: any){
@@ -47,7 +63,7 @@ const MixDetails = (props: any) => {
                     if(!ptObject.isPending){
                         return (
                             <div className="PlaylistCard">
-                                <div className="PlaylistName"><p style={{'color': 'white'}}>{location.state[index].name}</p></div>
+                                <div className="PlaylistName"><p style={{'color': 'white'}}>{location.state.playlists[index].name}</p></div>
                                 <div className="PlaylistSongs">
                                     {ptObject.data.items.map((songInfo: any) => {
                                         return (<p style={{'color': 'white'}}>{songInfo.track.name}</p>);

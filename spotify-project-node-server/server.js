@@ -1,12 +1,23 @@
 const http = require('http');
 const fs = require('fs');
+const _ = require('lodash');
 
 const server = http.createServer((req, res) => {
+    const num = _.random(0,20);
+    console.log(num);
+
+    const greet =  _.once(() => {
+        console.log('only want to run once ever');
+    });
+
+    greet();
+    greet();
+    
     //callback runs everytime a request comes  in
     //request and response object
     console.log(req.url, req.method);
     res.setHeader('Content-Type', 'text/html');
-    let path = './views/';
+    let path = './views_old/';
     switch(req.url){
         case '/':
             path += 'index.html';

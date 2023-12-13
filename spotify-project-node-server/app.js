@@ -1,35 +1,42 @@
 const express = require('express');
+const morgan = require('morgan');
 //init server
 const app = express();
 
 //register view engine
 app.set('view engine', 'ejs');
-app.set('views', 'myviews');
+//app.set('views', 'myviews');
 
 //listen for reqs
 app.listen(3000);
 
+//middleware and static files
+app.use(express.static('public'));
+//folder named public will be accessible to browser
+//typically used for files linked by other files we have paths to
+app.use(morgan('dev'));
+
 app.get('/', (req, res) => {
-    //res.send('<p>homepage</p>');
-    res.sendFile('./views_old/index.html', {'root': __dirname});
-    //send and sendfile auto sets content type header
-    //for second file we need an absolute path so in options parameter
-    //we set the root directory we are working from
+    const blogs = [
+        {'title': 'mario', 'content': 'its a me'},
+        {'title': 'yoshi', 'content': 'yoshi!'},
+        {'title': 'toad', 'content': 'aaaaaaaa'}
+    ]
+    res.render('index', {'title': 'home', 'blogs': blogs});
+    //2nd object is injected into the ejs so we can use it
 });
 
 app.get('/about', (req, res) => {
     //res.send('<p>about page</p>');
-    res.sendFile('./views_old/about.html', {'root': __dirname});
+    res.render('about', {'title': 'about'});
 });
 
-//redirect
-app.get('/about-me', (req, res) => {
-    res.redirect('/about');
-});
-
+app.get('/blogs/create', (req, res) => {
+    res.render('create', {'title': 'create'});
+})
 //404
 app.use((req, res) => {
-    res.status(404).sendFile('./views_old/404.html', {'root': __dirname});
+    res.status(404).render('404', {'title': '404'});
     //like a switch where we check all possible routes from top to bottom
     //and if we reach this function its like the default
 });

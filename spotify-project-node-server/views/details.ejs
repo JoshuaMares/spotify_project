@@ -1,0 +1,28 @@
+<html lang="en">
+<%- include('./partials/head.ejs') %>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <h1>deets ejs</h1>
+    <h2><%= blog.title %></h2>
+    <p><%= blog.snippet %></p>
+    <p><%= blog.body %></p>
+    <a class='delete' data-doc="<%= blog._id %>"><p>delete</p></a>
+
+    <script>
+        const trash = document.querySelector('a.delete');
+        trash.addEventListener('click', (event) => {
+            console.log(trash.dataset.doc);
+            const endpoint = `/blogs/${trash.dataset.doc}`;//dataset.doc actually pulling data-doc
+            fetch(endpoint, {
+                method: 'DELETE',
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                console.log(data);
+                window.location.href = data.redirect;
+            }).catch((err) => console.log(err));
+        });
+    </script>
+
+</body>
+</html>

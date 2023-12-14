@@ -1,2 +1,3 @@
 spotify_keys.ts
-node_modules/
+mongo_info.js
+*node_modules/

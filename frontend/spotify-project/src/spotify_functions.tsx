@@ -1,5 +1,5 @@
 import { json } from "react-router-dom";
-import {clientID, secretClient} from "../../spotify_keys.ts"
+import {clientID, secretClient} from "../../../private_info/spotify_keys.ts";
 import {useState, useEffect } from "react";
 const HTML_URL_SPACE_ENCODING = '%20';
 
@@ -29,7 +29,7 @@ function requestAuthorization(){
                   'user-read-recently-played', //read recent listening activity
                   'user-library-modify', //make playlists
                   'user-library-read', //read other items in library (likes songs, albums, podcasts, etc)
-                  'user-read-private'] //read profile
+                  'user-read-private']; //read profile
     let url = AUTHORIZE_URL;
     url += "client_id=" + clientID;
     url += "&response_type=code";

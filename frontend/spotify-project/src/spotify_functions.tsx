@@ -61,9 +61,11 @@ function useTokens(){
             const abortCont = new AbortController();
             let fetchParameters = {
                 method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 body: ('code=' + code),
                 signal: abortCont.signal
             }
+            console.log('fetchParameters: ', fetchParameters);
             fetch(BACKEND_URL + 'callback', fetchParameters)
             .then(result => {
                 if(!result.ok){
@@ -89,50 +91,6 @@ function useTokens(){
         }
     }, []);
 }
-
-// function useTokens(){
-//     useEffect(() => {
-//         if(window.location.search.length > 0){
-//             let code = getCode();
-//             const abortCont = new AbortController();
-//             let authParameters = {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/x-www-form-urlencoded',
-//                     'Authorization': 'Basic ' + btoa(clientID + ':' + secretClient)
-//                 },
-//                 body: ('grant_type=authorization_code' 
-//                     + '&code=' + code
-//                     + '&redirect_uri=' + encodeURI(REDIRECT_URI)
-//                     + '&client_id=' + clientID
-//                     + "&client_secret=" + secretClient),
-//                 signal: abortCont.signal
-//             }
-//             fetch(TOKEN_URL, authParameters)
-//             .then(result => {
-//                 if(!result.ok){
-//                     throw Error('could not fetch data for that resource');
-//                 }
-//                 return result.json()
-//             }).then(data => {
-//                 localStorage.setItem("accessToken", data.access_token);
-//                 console.log("accessToken: " + data.access_token);
-//                 localStorage.setItem("refreshToken", data.refreshToken);
-//                 console.log("refreshToken: " + data.refresh_token);
-//                 window.location.href = HOME_URL; 
-//                 //window.history.pushState("", "", REDIRECT_URI);
-//             }).catch(err => {
-//                 if(err.name === 'AbortError'){
-//                     console.log('fetch aborted while getting tokens');
-//                 }else{
-//                     console.log(err.message);
-//                     alert(err.message);
-//                 }
-//             });
-//             return () => abortCont.abort();
-//         }
-//     }, []);
-// }
 
 function getLocalStorageAccessToken(){
     let lsat = localStorage.getItem('accessToken');

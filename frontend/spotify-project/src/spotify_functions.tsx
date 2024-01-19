@@ -68,10 +68,19 @@ function useTokens(){
             console.log('fetchParameters: ', fetchParameters);
             fetch(BACKEND_URL + 'callback', fetchParameters)
             .then(result => {
-                if(!result.ok){
+                if(localStorage.getItem('accessToken')){
+                    //since this is called twice in react dev environment and the codes are one time use
+                    //we get a race condition where we make 2 requests to the server and the server makes 2
+                    //requests using the same code to the spotify auth api.  The api will accept one and then
+                    //return the tokens and reject the other.  However, is is random which one gets here first
+                    //so rejection-> tokens works since we render the token page, but not tokens->rejection
+                    window.location.href = HOME_URL;
+                }
+                if(result.status == 200){
+                    return result.json()
+                }else{
                     throw Error('could not fetch data for that resource');
                 }
-                return result.json()
             }).then(data => {
                 localStorage.setItem("accessToken", data.access_token);
                 console.log("accessToken: " + data.access_token);

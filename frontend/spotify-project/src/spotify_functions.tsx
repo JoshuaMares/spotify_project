@@ -10,14 +10,14 @@ when user allows access the spotify page uses the redirect_uri we
     passed in to send us back to the mixers app with authorization code
 then take code and use it to request access and refresh token
 */
-
+/* Replace these values with your own values */
 const BACKEND_URL = 'http://localhost:4000/';
 const REDIRECT_URI = 'http://localhost:5173/loading/';
+const CLIENT_ID = 'a70182fad1a1414f9f3529dd9f018f8d';
 const HOME_URL = 'http://localhost:5173/home/';
 const LANDING_URL = 'http://localhost:5173/';
 const AUTHORIZE_URL = 'https://accounts.spotify.com/authorize?';
 const TOKEN_URL = 'https://accounts.spotify.com/api/token';
-const CLIENT_ID = 'a70182fad1a1414f9f3529dd9f018f8d';
 
 //auth flow
 /*

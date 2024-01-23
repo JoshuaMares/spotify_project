@@ -53,6 +53,10 @@ userSchema.statics.createUser = async function(userName, userID, accessToken, re
         'mixers': [],
     });
 
+    if(!user){
+        console.log('user could not be created');
+    }
+
     return user;
 }
 
@@ -61,15 +65,23 @@ userSchema.statics.updateSpotifyTokens = async function(userID, accessToken, ref
         throw Error('All fields must be filled');
     }
 
-    const user = await this.findOne({userID});
-    if(user){
-        user.accessToken = accessToken;
-        user.refreshToken = refreshToken;
-        await user.save()
-    }else{
-        throw Error('User does not exist');
-    }
+    const query = { 'userID': userID }; // Specify the field and its value to find the document
+    const update = {
+        $set: {
+            'accessToken': accessToken,
+            'refreshToken': refreshToken,
+        },
+    };
+    const options = {
+        new: true, // Return the modified document instead of the original
+    };
 
+    let user;
+    try{
+        user = await this.findOneAndUpdate(query, update, options);
+    }catch(err){
+        console.log('findoneandupdate err: ', err);
+    }
     return user;
 }
 

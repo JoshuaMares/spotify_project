@@ -66,9 +66,9 @@ function useTokens(){
                 signal: abortCont.signal
             }
             console.log('fetchParameters: ', fetchParameters);
-            fetch(BACKEND_URL + 'callback', fetchParameters)
+            fetch(BACKEND_URL + 'user/login', fetchParameters)
             .then(result => {
-                if(localStorage.getItem('accessToken')){
+                if(localStorage.getItem('jwt')){
                     //since this is called twice in react dev environment and the codes are one time use
                     //we get a race condition where we make 2 requests to the server and the server makes 2
                     //requests using the same code to the spotify auth api.  The api will accept one and then
@@ -82,10 +82,12 @@ function useTokens(){
                     throw Error('could not fetch data for that resource');
                 }
             }).then(data => {
-                localStorage.setItem("accessToken", data.access_token);
-                console.log("accessToken: " + data.access_token);
-                localStorage.setItem("refreshToken", data.refreshToken);
-                console.log("refreshToken: " + data.refresh_token);
+                localStorage.setItem("userName", data.userName);
+                console.log("userName: " + data.userName);
+                localStorage.setItem("userID", data.userID);
+                console.log("userID: " + data.userID);
+                localStorage.setItem("jwt", data.jwt);
+                console.log("jwt: " + data.jwt);
                 window.location.href = HOME_URL; 
                 //window.history.pushState("", "", REDIRECT_URI);
             }).catch(err => {

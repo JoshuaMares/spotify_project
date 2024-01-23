@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 const Schema = mongoose.Schema;
 
-const authCodechema = new Schema({
+const authCodeSchema = new Schema({
     'authCode': {
         'type': String,
         'required': true,

@@ -13,13 +13,13 @@ const getSpotifyTokens = async (code) => {
         method: 'POST',
         headers: {
             'content-type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic ' + (new Buffer.from(client_keys.id + ':' + client_keys.secret).toString('base64'))
+            'Authorization': 'Basic ' + (new Buffer.from(process.env.SPOTIFY_ID + ':' + process.env.SPOTIFY_SECRET).toString('base64'))
         },
         body: ('grant_type=authorization_code' 
         + '&code=' + code
-        + '&redirect_uri=' + encodeURI(REDIRECT_URI)
-        + '&client_id=' + clientID
-        + "&client_secret=" + secretClient),
+        + '&redirect_uri=' + encodeURI("http://localhost:5173/loading/")
+        + '&client_id=' + process.env.SPOTIFY_ID
+        + "&client_secret=" + process.env.SPOTIFY_SECRET),
     };
     
     const tokenPackage = await fetch(authURL, authParameters)
@@ -28,7 +28,7 @@ const getSpotifyTokens = async (code) => {
             if(!res.ok){
                 throw Error('Failed to fetch tokens', {'cause': res});
             }
-            return data.json();
+            return res.clone().json();
         }).then((json) => {
             return {'ok': true, ...json};
         }).catch((err) => {
@@ -40,8 +40,8 @@ const getSpotifyTokens = async (code) => {
     return tokenPackage;
 }
 
-const spotifyAPI = async (method, url, body, accessToken) => {
-    let authParameters = {
+const spotifyAPI = async (url, method, body, accessToken) => {
+    let fetchParameters = {
         'method': method,
         'headers': {
             'Content-Type': 'application/json',
@@ -49,10 +49,10 @@ const spotifyAPI = async (method, url, body, accessToken) => {
         },
         'body': body,
     };
-    const payload = await fetch(authURL, authParameters)
+    const payload = await fetch(url, fetchParameters)
         .then((res) => {
             if(!res.ok){
-                throw Error('Failed to fetch tokens', {'cause': res});
+                throw Error(`Failed to fetch resources from ${url}`, {'cause': res});
             }
             return res.json();
         }).then((json) => {
@@ -82,7 +82,7 @@ const loginUser = async (req, res) => {
     console.log('code: ', code);
     try{
         await AuthCode.registerCode(code);
-    }catch{
+    }catch(error){
         if(error.message !== 'Used Code'){
             res.status(400).json({'error': error.message});
         }
@@ -108,16 +108,21 @@ const loginUser = async (req, res) => {
         const user = await User.info(userInfo.id);
         if(user){
             //yes?, update our stored spotify tokens
+            console.log(`user ${user.userName} exists, updating tokens`);
             user = await User.updateSpotifyTokens(userInfo.id, tokenPackage.access_token, tokenPackage.refresh_token);
+            console.log(`updated tokens for ${user.userName}`);
         }else{
             //no?, create the user
+            console.log(`user does not exist, creating user in db`);
             user = await User.createUser(userInfo.display_name, userInfo.id, tokenPackage.access_token, tokenPackage.refresh_token);
+            console.log(`created user ${user.userName}`);
         }
         //create new token
         const token = createToken(user.userID);
-        res.status(200).json({'userID': user.userID, 'jwt': token});
+        console.log('jwt: ', token);
+        res.status(200).json({'userID': user.userID, 'userName': user.userName, 'jwt': token});
         return;
-    }catch{
+    }catch(error){
         res.status(400).json({'error': error.message});
         return;
     }

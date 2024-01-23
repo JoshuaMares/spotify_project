@@ -1,7 +1,5 @@
 require('dotenv').config();
 
-const client_keys = require('../private_info/spotify_keys.ts');
-const mongo_uri = require('../private_info/mongo_info.js');
 const express = require('express');
 const mongoose = require('mongoose');
 const request = require('request');
@@ -46,7 +44,7 @@ app.post('/callback', (req, res) => {
     method: 'POST',
     headers: {
         'content-type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + (new Buffer.from(client_keys.id + ':' + client_keys.secret).toString('base64'))
+        'Authorization': 'Basic ' + (new Buffer.from(process.env.SPOTIFY_ID + ':' + process.env.SPOTIFY_SECRET).toString('base64'))
     },
     form: {
         code: code,
@@ -69,7 +67,7 @@ app.post('/callback', (req, res) => {
     });
 })
 
-mongoose.connect(mongo_uri)
+mongoose.connect(process.env.MONGODB_CONNECTION_STRING)
   .then(() => {
     // listen for requests
     app.listen(process.env.PORT, () => {

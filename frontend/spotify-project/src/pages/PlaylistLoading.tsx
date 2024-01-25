@@ -1,5 +1,5 @@
 import { useLocation, useNavigate} from "react-router-dom";
-import { useSpotify } from "./spotify_functions";
+import { useSpotify } from "../hooks/useSpotifyLogin";
 import { useEffect } from "react";
 
 const PlaylistLoadingPage = () => {

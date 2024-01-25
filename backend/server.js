@@ -31,42 +31,6 @@ app.get('/', (req, res) => {
     res.json({'mssg': 'Welcome to the app'});
 });
 
-app.post('/callback', (req, res) => {
-    console.log('req body: ', req.body);
-    const code = req.body.code || null;
-    if(code == null){
-        res.status(400).send('no code provided');
-    }
-    console.log('code: ', code);
-
-    const authParameters = {
-    url: 'https://accounts.spotify.com/api/token',
-    method: 'POST',
-    headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + (new Buffer.from(process.env.SPOTIFY_ID + ':' + process.env.SPOTIFY_SECRET).toString('base64'))
-    },
-    form: {
-        code: code,
-        redirect_uri: 'http://localhost:5173/loading/',
-        grant_type: 'authorization_code'
-    },
-    json: true
-    };
-    console.log('authParameters: ', authParameters);
-    request(authParameters, (error, response, data) => {
-        //console.log('error: ', error);
-        //console.log('response: ', response);
-        console.log('data: ', data);
-        if(error){
-            console.log('we have an error');
-            res.status(502).send('server error');
-        }else{
-            res.status(200).send(data);
-        }
-    });
-})
-
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING)
   .then(() => {
     // listen for requests

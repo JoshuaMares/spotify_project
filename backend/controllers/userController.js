@@ -76,6 +76,7 @@ const loginUser = async (req, res) => {
     console.log('req body: ', req.body);
     const { code } = req.body;
     if(code == null){
+        console.log('no code');
         res.status(400).send('no code provided');
         return;
     }
@@ -83,6 +84,7 @@ const loginUser = async (req, res) => {
     try{
         await AuthCode.registerCode(code);
     }catch(error){
+        console.log('used code');
         if(error.message !== 'Used Code'){
             res.status(400).json({'error': error.message});
         }
@@ -91,6 +93,7 @@ const loginUser = async (req, res) => {
     //get tokens using auth code
     const tokenPackage = await getSpotifyTokens(code);
     if(!tokenPackage.ok){
+        console.log('error retrieving tokens');
         res.status(400).json({'error': 'Error retrieving tokens'});
     }
     console.log(tokenPackage);
@@ -98,6 +101,7 @@ const loginUser = async (req, res) => {
     //get spotify user profile with token
     const userInfo = await spotifyUserProfile(tokenPackage.access_token);
     if(!userInfo.ok){
+        console.log('error pulling user info');
         res.status(400).json({'error': 'Error pulling user info'});
         return;
     } 
@@ -105,12 +109,12 @@ const loginUser = async (req, res) => {
 
     //has this user used our app before
     try{
-        const user = await User.info(userInfo.id);
+        let user = await User.info(userInfo.id);
         if(user){
             //yes?, update our stored spotify tokens
             console.log(`user ${user.userName} exists, updating tokens`);
             user = await User.updateSpotifyTokens(userInfo.id, tokenPackage.access_token, tokenPackage.refresh_token);
-            console.log(`updated tokens for ${user.userName}`);
+            console.log(`updated tokens`);
         }else{
             //no?, create the user
             console.log(`user does not exist, creating user in db`);
@@ -120,23 +124,16 @@ const loginUser = async (req, res) => {
         //create new token
         const token = createToken(user.userID);
         console.log('jwt: ', token);
-        res.status(200).json({'userID': user.userID, 'userName': user.userName, 'jwt': token});
+        data = {'userID': user.userID, 'userName': user.userName, 'jwt': token}
+        res.status(200).send(data);
+        console.log('sent response');
         return;
     }catch(error){
         res.status(400).json({'error': error.message});
+        console.log('error');
         return;
     }
 }
-
-
-
-
-
-
-
-
-
-
 
 //sign up
 const signupUser = async (req, res) => {

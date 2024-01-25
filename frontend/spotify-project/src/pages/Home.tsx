@@ -2,11 +2,11 @@ import './Home.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faSwatchbook } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react';
-import { useSpotify } from './spotify_functions';
+import { useSpotify } from '../hooks/useSpotifyLogin';
 import Loading from './Loading';
 import Error from './Error';
 import Invites from './Invites';
-import Playlists from './Playlists';
+import Playlists from '../components/Playlists';
 
 const Home = () => {
     const userInfoObject = useSpotify('https://api.spotify.com/v1/me', 'GET', null);

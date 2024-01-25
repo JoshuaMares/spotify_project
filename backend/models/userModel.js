@@ -64,24 +64,13 @@ userSchema.statics.updateSpotifyTokens = async function(userID, accessToken, ref
     if( !userID || !accessToken || !refreshToken ){
         throw Error('All fields must be filled');
     }
-
-    const query = { 'userID': userID }; // Specify the field and its value to find the document
-    const update = {
-        $set: {
-            'accessToken': accessToken,
-            'refreshToken': refreshToken,
-        },
-    };
-    const options = {
-        new: true, // Return the modified document instead of the original
-    };
-
-    let user;
-    try{
-        user = await this.findOneAndUpdate(query, update, options);
-    }catch(err){
-        console.log('findoneandupdate err: ', err);
-    }
+    //find
+    const user = await this.findOne({'userID': userID});
+    //update locally
+    user.accessToken = accessToken;
+    user.refreshToken = refreshToken;
+    //save updates to db
+    await user.save();
     return user;
 }
 

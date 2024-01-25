@@ -1,7 +1,9 @@
 import "./Landing.css"
-import {requestAuthorization} from './spotify_functions';
+import { useSpotifyLogin } from '../hooks/useSpotifyLogin';
 
 const Landing = () => {
+    const { login, isLoading, error } = useSpotifyLogin();
+
     return (  
         <div className="Landing">
             <div className="textBox">
@@ -12,7 +14,7 @@ const Landing = () => {
                 start!
                 </p> 
             </div>
-            <button className="loginButton" onClick={requestAuthorization}>Log In</button>
+            <button className="loginButton" onClick={login}>Log In</button>
         </div>
     );
 }

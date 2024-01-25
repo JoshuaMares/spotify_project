@@ -2,7 +2,7 @@ import './Playlists.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faArrowsSpin} from '@fortawesome/free-solid-svg-icons'
 import {useState, useEffect} from "react";
-import { useSpotify } from './spotify_functions';
+import { useSpotify } from '../hooks/useSpotifyLogin';
 import { useNavigate } from "react-router-dom";
 
 const Playlists = ({userInfoObject, playlistObject}) => {

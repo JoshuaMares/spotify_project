@@ -1,7 +1,7 @@
 import './MixDetails.css';
 import { useState, useEffect} from "react"
 import { useLocation, useNavigate } from "react-router-dom";
-import { useSpotify } from "./spotify_functions";
+import { useSpotify } from "../hooks/useSpotifyLogin";
 
 const MixDetails = (props: any) => {
     const [mixName, setName] = useState('My Mix');

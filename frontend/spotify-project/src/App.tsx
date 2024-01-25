@@ -1,16 +1,16 @@
 import './App.css';
-import Navbar from "./Navbar.tsx";
-import Landing from "./Landing.tsx";
-import Home from "./Home.tsx"
-import Loading from './Loading.tsx';
-import PlaylistCreationPage from './PlaylistCreation.tsx';
-import { useTokens } from './spotify_functions.tsx';
+import Navbar from "./components/Navbar.tsx";
+import Landing from "./pages/Landing.tsx";
+import Home from "./pages/Home.tsx"
+import Loading from './pages/Loading.tsx';
+import PlaylistCreationPage from './pages/PlaylistCreation.tsx';
+import { useSpotifyLogin } from './hooks/useSpotifyLogin.tsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MixDetails from './MixDetails.tsx';
-import PlaylistLoadingPage from './PlaylistLoading.tsx';
+import MixDetails from './pages/MixDetails.tsx';
+import PlaylistLoadingPage from './pages/PlaylistLoading.tsx';
 
 function App(){
-  useTokens();
+  useSpotifyLogin();
   
   return (
     <Router>

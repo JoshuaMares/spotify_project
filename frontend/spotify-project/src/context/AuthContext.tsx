@@ -14,6 +14,7 @@ export const authReducer = (state, action) => {
 }
 
 export const AuthContextProvider = ({ children }) => {
+    //children is the component we wrap
     const [state, dispatch] = useReducer(authReducer, {
         user: null, 
     });

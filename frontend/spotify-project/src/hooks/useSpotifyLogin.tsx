@@ -1,5 +1,7 @@
 import { json } from "react-router-dom";
 import {useState, useEffect } from "react";
+import { useAuthContext } from "./useAuthContext";
+
 const HTML_URL_SPACE_ENCODING = '%20';
 
 /*
@@ -17,7 +19,6 @@ const CLIENT_ID = 'a70182fad1a1414f9f3529dd9f018f8d';
 const HOME_URL = 'http://localhost:5173/home/';
 const LANDING_URL = 'http://localhost:5173/';
 const AUTHORIZE_URL = 'https://accounts.spotify.com/authorize?';
-const TOKEN_URL = 'https://accounts.spotify.com/api/token';
 
 //auth flow
 /*
@@ -32,30 +33,48 @@ our node server then uses the secret key only it has to get the tokens
 the tokens are then passed back to the front end
 */
 
-function requestAuthorization(){
-    //scopes are permissions we want
-    let scopes = ['playlist-read-private', //read private pl
-                  'playlist-read-collaborative', //read collab pl
-                  'playlist-modify-private', //modify private pls
-                  'playlist-modify-public', //modify public pls
-                  'user-follow-read', //know which accs you follow
-                  'user-top-read', //read your top songs
-                  'user-read-recently-played', //read recent listening activity
-                  'user-library-modify', //make playlists
-                  'user-library-read', //read other items in library (likes songs, albums, podcasts, etc)
-                  'user-read-private']; //read profile
-    let url = AUTHORIZE_URL;
-    url += "client_id=" + CLIENT_ID;
-    url += "&response_type=code";
-    url += "&redirect_uri=" + encodeURI(REDIRECT_URI);
-    url += "&show_dialog=true";
-    url += "&scope=" + scopes.join(HTML_URL_SPACE_ENCODING);
-    window.location.href = url;
-    //look into state parameter   
+function getCode(){
+    let code = null;
+    const queryString = window.location.search;
+    if(queryString.length > 0){
+        const urlParams = new URLSearchParams(queryString);
+        code = urlParams.get('code');
+        console.log('code is: ' + code);
+    }
+    return code;
 }
 
-function useTokens(){
+function useSpotifyLogin(){
+    function login(){
+        //scopes are permissions we want
+        let scopes = ['playlist-read-private', //read private pl
+                      'playlist-read-collaborative', //read collab pl
+                      'playlist-modify-private', //modify private pls
+                      'playlist-modify-public', //modify public pls
+                      'user-follow-read', //know which accs you follow
+                      'user-top-read', //read your top songs
+                      'user-read-recently-played', //read recent listening activity
+                      'user-library-modify', //make playlists
+                      'user-library-read', //read other items in library (likes songs, albums, podcasts, etc)
+                      'user-read-private']; //read profile
+        let url = AUTHORIZE_URL;
+        url += "client_id=" + CLIENT_ID;
+        url += "&response_type=code";
+        url += "&redirect_uri=" + encodeURI(REDIRECT_URI);
+        url += "&show_dialog=true";
+        url += "&scope=" + scopes.join(HTML_URL_SPACE_ENCODING);
+        window.location.href = url;
+        //look into state parameter   
+    }
+
+    const [isLoading, setIsLoading] = useState<null | Boolean>(null);
+    const [error, setError] = useState<null | String>(null);
+    const { dispatch } = useAuthContext();
+
     useEffect(() => {
+        setIsLoading(true);
+        setError(null);
+
         if(window.location.search.length > 0){
             let code = getCode();
             const abortCont = new AbortController();
@@ -67,8 +86,8 @@ function useTokens(){
             }
             console.log('fetchParameters: ', fetchParameters);
             fetch(BACKEND_URL + 'user/login', fetchParameters)
-            .then(result => {
-                if(localStorage.getItem('jwt')){
+            .then(response => {
+                if(localStorage.getItem('user')){
                     //since this is called twice in react dev environment and the codes are one time use
                     //we get a race condition where we make 2 requests to the server and the server makes 2
                     //requests using the same code to the spotify auth api.  The api will accept one and then
@@ -76,18 +95,18 @@ function useTokens(){
                     //so rejection-> tokens works since we render the token page, but not tokens->rejection
                     window.location.href = HOME_URL;
                 }
-                if(result.status == 200){
-                    return result.json()
+                console.log('response: ', response);
+                if(response.status == 200){
+                    return response.json()
                 }else{
                     throw Error('could not fetch data for that resource');
                 }
             }).then(data => {
-                localStorage.setItem("userName", data.userName);
-                console.log("userName: " + data.userName);
-                localStorage.setItem("userID", data.userID);
-                console.log("userID: " + data.userID);
-                localStorage.setItem("jwt", data.jwt);
-                console.log("jwt: " + data.jwt);
+                //save to local storage
+                localStorage.setItem('user', JSON.stringify(data));
+                //update auth context
+                dispatch({type: 'LOGIN', payload: data});
+                setIsLoading(false);
                 window.location.href = HOME_URL; 
                 //window.history.pushState("", "", REDIRECT_URI);
             }).catch(err => {
@@ -101,6 +120,8 @@ function useTokens(){
             return () => abortCont.abort();
         }
     }, []);
+
+    return {login, isLoading, error};
 }
 
 function getLocalStorageAccessToken(){
@@ -181,15 +202,4 @@ function spotifyAPI(url: string, authParameters: any, stateObject: any){
         });
 }
 
-function getCode(){
-    let code = null;
-    const queryString = window.location.search;
-    if(queryString.length > 0){
-        const urlParams = new URLSearchParams(queryString);
-        code = urlParams.get('code');
-        console.log('code is: ' + code);
-    }
-    return code;
-}
-
-export {requestAuthorization, useTokens, useSpotify};
+export {useSpotifyLogin, useSpotify};

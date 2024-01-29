@@ -3,7 +3,7 @@
     margin: 0;
 }
 
-.Landing{
+.Code{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,7 +22,7 @@
     padding: 0;
 }
 
-.connectButton{
+.loginButton{
     background-color: var(--spotify-green);
     color: var(--spotify-black);
     border: none;

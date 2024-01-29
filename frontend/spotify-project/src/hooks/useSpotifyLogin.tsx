@@ -14,7 +14,7 @@ then take code and use it to request access and refresh token
 */
 /* Replace these values with your own values */
 const BACKEND_URL = 'http://localhost:4000/';
-const REDIRECT_URI = 'http://localhost:5173/loading/';
+const REDIRECT_URI = 'http://localhost:5173/code/';
 const CLIENT_ID = 'a70182fad1a1414f9f3529dd9f018f8d';
 const HOME_URL = 'http://localhost:5173/home/';
 const LANDING_URL = 'http://localhost:5173/';
@@ -33,21 +33,8 @@ our node server then uses the secret key only it has to get the tokens
 the tokens are then passed back to the front end
 */
 
-function getCode(){
-    let code = null;
-    const queryString = window.location.search;
-    if(queryString.length > 0){
-        const urlParams = new URLSearchParams(queryString);
-        code = urlParams.get('code');
-        console.log('code is: ' + code);
-    }
-    return code;
-}
-
-function useSpotifyLogin(){
-    function login(){
-        //scopes are permissions we want
-        let scopes = ['playlist-read-private', //read private pl
+function connect(){
+    let scopes = ['playlist-read-private', //read private pl
                       'playlist-read-collaborative', //read collab pl
                       'playlist-modify-private', //modify private pls
                       'playlist-modify-public', //modify public pls
@@ -64,66 +51,59 @@ function useSpotifyLogin(){
         url += "&show_dialog=true";
         url += "&scope=" + scopes.join(HTML_URL_SPACE_ENCODING);
         window.location.href = url;
-        //look into state parameter   
-    }
+}
 
+function getCode(){
+    let code = null;
+    const queryString = window.location.search;
+    if(queryString.length > 0){
+        const urlParams = new URLSearchParams(queryString);
+        code = urlParams.get('code');
+        console.log('code is: ' + code);
+    }
+    return code;
+}
+
+function useSpotifyLogin(){
     const [isLoading, setIsLoading] = useState<null | Boolean>(null);
     const [error, setError] = useState<null | String>(null);
     const { dispatch } = useAuthContext();
 
-    useEffect(() => {
+    const login = async () => {
         setIsLoading(true);
         setError(null);
-
-        if(window.location.search.length > 0){
-            let code = getCode();
-            const abortCont = new AbortController();
-            let fetchParameters = {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: ('code=' + code),
-                signal: abortCont.signal
-            }
-            console.log('fetchParameters: ', fetchParameters);
-            fetch(BACKEND_URL + 'user/login', fetchParameters)
-            .then(response => {
-                if(localStorage.getItem('user')){
-                    //since this is called twice in react dev environment and the codes are one time use
-                    //we get a race condition where we make 2 requests to the server and the server makes 2
-                    //requests using the same code to the spotify auth api.  The api will accept one and then
-                    //return the tokens and reject the other.  However, is is random which one gets here first
-                    //so rejection-> tokens works since we render the token page, but not tokens->rejection
-                    window.location.href = HOME_URL;
-                }
-                console.log('response: ', response);
-                if(response.status == 200){
-                    return response.json()
-                }else{
-                    throw Error('could not fetch data for that resource');
-                }
-            }).then(data => {
-                //save to local storage
-                localStorage.setItem('user', JSON.stringify(data));
-                //update auth context
-                dispatch({type: 'LOGIN', payload: data});
-                setIsLoading(false);
-                window.location.href = HOME_URL; 
-                //window.history.pushState("", "", REDIRECT_URI);
-            }).catch(err => {
-                if(err.name === 'AbortError'){
-                    console.log('fetch aborted while getting tokens');
-                }else{
-                    console.log(err.message);
-                    alert(err.message);
-                }
-            });
-            return () => abortCont.abort();
+        
+        const code = getCode();
+        if(!code){
+            setIsLoading(false);
+            setError("Missing authorization code, redirecting to login page.");
         }
-    }, []);
+
+        const abortCont = new AbortController();
+        let fetchParameters = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: ('code=' + code),
+            signal: abortCont.signal
+        }
+
+        const response  = await fetch(BACKEND_URL + 'user/login', fetchParameters);
+        const json = await response.json();
+
+        if(!response.ok){
+            setIsLoading(false);
+            setError(json.error);
+        }else{
+            localStorage.setItem('user', JSON.stringify(json));
+            dispatch({'type': 'LOGIN', 'payload': json});
+            setIsLoading(false);
+            window.location.href = HOME_URL;
+        }
+    }
 
     return {login, isLoading, error};
 }
-
+/*
 function getLocalStorageAccessToken(){
     let lsat = localStorage.getItem('accessToken');
     if(lsat !== null){
@@ -176,7 +156,7 @@ function spotifyAPI(url: string, authParameters: any, stateObject: any){
     fetch(url, authParameters)
         .then(result => {
             if(!result.ok){
-                throw Error('could not fetch data for that resource');
+                throw Error('spotifyAPI: could not fetch data for that resource');
             }
             return result.json()
         }).then(data => {
@@ -201,5 +181,5 @@ function spotifyAPI(url: string, authParameters: any, stateObject: any){
             }
         });
 }
-
-export {useSpotifyLogin, useSpotify};
+*/
+export {connect, useSpotifyLogin};

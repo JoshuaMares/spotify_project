@@ -17,7 +17,7 @@ const getSpotifyTokens = async (code) => {
         },
         body: ('grant_type=authorization_code' 
         + '&code=' + code
-        + '&redirect_uri=' + encodeURI("http://localhost:5173/loading/")
+        + '&redirect_uri=' + encodeURI("http://localhost:5173/code/")
         + '&client_id=' + process.env.SPOTIFY_ID
         + "&client_secret=" + process.env.SPOTIFY_SECRET),
     };
@@ -81,6 +81,7 @@ const loginUser = async (req, res) => {
         return;
     }
     console.log('code: ', code);
+
     try{
         await AuthCode.registerCode(code);
     }catch(error){
@@ -95,6 +96,7 @@ const loginUser = async (req, res) => {
     if(!tokenPackage.ok){
         console.log('error retrieving tokens');
         res.status(400).json({'error': 'Error retrieving tokens'});
+        return;
     }
     console.log(tokenPackage);
 
@@ -133,23 +135,6 @@ const loginUser = async (req, res) => {
         console.log('error');
         return;
     }
-}
-
-//sign up
-const signupUser = async (req, res) => {
-    const {email, password} = req.body;
-
-    try{
-        const user = await User.signup(email, password);
-        const token = createToken(user._id);
-        res.status(200).json({email, token});
-    } catch(error){
-        //'Used Code' is a duplicate request and should be thrown out
-        if(error.message !== 'Used Code'){
-            res.status(400).json({'error': error.message});
-        }
-    }
-
 }
 
 module.exports = {loginUser};

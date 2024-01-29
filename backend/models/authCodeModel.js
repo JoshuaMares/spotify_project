@@ -19,6 +19,8 @@ authCodeSchema.statics.registerCode = async function(code){
 
     const exists = await this.findOne({'authCode': code});
     if(exists){
+        console.log('code exists');
+        
         throw Error('Used Code');
     }
 

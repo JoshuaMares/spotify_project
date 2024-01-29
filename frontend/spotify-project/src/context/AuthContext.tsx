@@ -25,6 +25,8 @@ export const AuthContextProvider = ({ children }) => {
         if(user){
             const userJSON= JSON.parse(user);
             dispatch({type: 'LOGIN', payload: userJSON })
+        }else{
+            window.location.href = 'http://localhost:5173/'; //landing
         }
     }, []);
 

@@ -21,9 +21,9 @@ function App(){
             <Route path="/" element={<Landing/>} />
             <Route path="/code" element={<Code/>} />
             <Route path="/home/" element={<Home/>}/>
-            <Route path="/mixers/" element={<MixDetails/>}/>
+            {/* <Route path="/mixers/" element={<MixDetails/>}/>
             <Route path="/creating_playlist/" element={<PlaylistCreationPage/>}/>
-            <Route path="/filling_playlist/" element={<PlaylistLoadingPage/>}/>
+            <Route path="/filling_playlist/" element={<PlaylistLoadingPage/>}/> */}
           </Routes>
         </div>
       </div>

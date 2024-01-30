@@ -1,9 +1,9 @@
 import { useLocation, useNavigate} from "react-router-dom";
-import { useSpotify } from "../hooks/useSpotifyLogin";
 import { useEffect } from "react";
 import Error from "./Error";
 
 const PlaylistCreationPage = () => {
+    /*
     const navigate = useNavigate();
     const location = useLocation();
     console.log(location.state);
@@ -36,6 +36,12 @@ const PlaylistCreationPage = () => {
             {playlistCreationObject.data && fillPlaylist()}
         </div>
     );
+    */
+   return (
+    <div className="Playlist-Creation-Page">
+        <p>Under Construction</p>
+    </div>
+   );
 }
  
 export default PlaylistCreationPage;

@@ -1,0 +1,58 @@
+.PlaylistInfo{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: large;
+    height: calc(0.15 * var(--img-dims));
+    /* border: 1px solid var(--spotify-white); */
+}
+
+.Full-Height{
+    height: 100%;
+}
+
+.Playlist-Image-Container{
+    width: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Playlist-Card-Image{
+    height: calc(0.125 * var(--img-dims));
+    width: calc(0.125 * var(--img-dims));
+}
+
+.Playlist-Text-Container{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    border: none;
+    width: 65%;
+}
+
+.Playlist-Text{
+    display: flex;
+    align-items: left;
+    text-overflow: ellipsis;
+    padding-right: 5%;
+}
+
+.Small-Text{
+    font-size: medium;
+}
+
+.Playlist-Checker-Container{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 10%;
+}
+
+.Playlist-Checked{
+    /* padding: 5px;
+    border-radius: 50%;
+    background-color: var(--spotify-green); */
+    font-size: xx-large;
+}

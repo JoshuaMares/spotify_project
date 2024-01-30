@@ -13,7 +13,7 @@ const Landing = () => {
                 Spotify account below to get started start!
                 </p> 
             </div>
-            <button className="connectButton" onClick={connect}>Connect</button>
+            <button className="connectButton" onClick={() => {connect()}}>Connect</button>
         </div>
     );
 }

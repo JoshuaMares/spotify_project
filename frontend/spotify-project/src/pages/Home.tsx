@@ -2,15 +2,15 @@ import './Home.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faSwatchbook } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react';
-import { useSpotify } from '../hooks/useSpotifyLogin';
 import Loading from './Loading';
 import Error from './Error';
 import Invites from './Invites';
 import Playlists from '../components/Playlists';
 
 const Home = () => {
-    const userInfoObject = useSpotify('https://api.spotify.com/v1/me', 'GET', null);
-    const playlistObject = useSpotify('https://api.spotify.com/v1/me/playlists', 'GET', null);
+    /*
+    const userInfoObject = {'error': 'none', 'isPending': false, 'data': []};//useSpotify('https://api.spotify.com/v1/me', 'GET', null);
+    const playlistObject = {'error': 'none', 'isPending': false, 'data': []};//useSpotify('https://api.spotify.com/v1/me/playlists', 'GET', null);
     const [window, setWindow] = useState('invites');
 
     return (  
@@ -32,6 +32,12 @@ const Home = () => {
             </div>
         </div>
     );
+    */
+    return (
+        <div className="Home">
+            <p>Under construction</p>
+        </div>
+    )
 }
  
 export default Home;

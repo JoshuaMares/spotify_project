@@ -2,17 +2,20 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 
 const requireAuth = async (req, res, next) => {
+    console.log('REQUIRE AUTH');
     //verify authentication
     const {authorization} = req.headers;
     if(!authorization){
         return res.status(401).json({'error': 'authorization token required'});
     }
 
+    //'Bearer token' but only want token
     const token = authorization.split(' ')[1];
 
     try{
-        const {_id} = jwt.verify(token. process.env.SECRET);
-        req.user = await User.findOne({_id}).select('_id');//only getting the _id property
+        const {userID} = jwt.verify(token, process.env.SECRET);
+        let userInfo = await User.findOne({'userID': userID}).select('-_id userID');//only getting the userID property
+        req.userID = userInfo.userID;
         next();
     }catch(error){
         console.log(error);

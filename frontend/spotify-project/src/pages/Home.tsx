@@ -8,10 +8,10 @@ import Invites from './Invites';
 import Playlists from '../components/Playlists';
 
 const Home = () => {
+    const [window, setWindow] = useState('invites');
     /*
     const userInfoObject = {'error': 'none', 'isPending': false, 'data': []};//useSpotify('https://api.spotify.com/v1/me', 'GET', null);
     const playlistObject = {'error': 'none', 'isPending': false, 'data': []};//useSpotify('https://api.spotify.com/v1/me/playlists', 'GET', null);
-    const [window, setWindow] = useState('invites');
 
     return (  
         <div className="Home">
@@ -19,6 +19,13 @@ const Home = () => {
             {playlistObject.isPending && <Loading/>}
             {window == 'invites' && <Invites/>}
             {playlistObject.data && window == 'library' && <Playlists userInfoObject={userInfoObject} playlistObject={playlistObject}/>}
+        </div>
+    );
+    */
+    return (
+        <div className="Home">
+            {window == 'invites' && <Invites/>}
+            {window == 'library' && <Playlists/>}
 
             <div className="Buttons-Container">
                 <div className="Buttons Invites" onClick={() => setWindow('invites')}>
@@ -30,12 +37,6 @@ const Home = () => {
                     <p>Library</p>
                 </div>
             </div>
-        </div>
-    );
-    */
-    return (
-        <div className="Home">
-            <p>Under construction</p>
         </div>
     )
 }

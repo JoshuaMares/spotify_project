@@ -2,8 +2,8 @@ const User = require('../models/userModel.js');
 const AuthCode = require('../models/authCodeModel.js');
 const jwt = require('jsonwebtoken');
 
-const createToken = (_id) => {
-    return jwt.sign({'_id': _id}, process.env.SECRET, {'expiresIn': '3d'});
+const createToken = (userID) => {
+    return jwt.sign({'userID': userID}, process.env.SECRET, {'expiresIn': '3d'});
 }
 
 //call to get spotify tokens
@@ -64,6 +64,17 @@ const spotifyAPI = async (url, method, body, accessToken) => {
         });
     
     return payload;
+}
+
+const getSpotifyPlaylists = async (userID, accessToken) => {
+    let url = `https://api.spotify.com/v1/users/${userID}/playlists`;
+    let playlistArray = [];
+    while(url){
+        let playlistObject = await spotifyAPI(url, 'GET', null, accessToken)
+        playlistArray = playlistArray.concat(playlistObject.items);
+        url = playlistObject.next;
+    }
+    return playlistArray;
 }
 
 const spotifyUserProfile = async (accessToken) => {
@@ -137,4 +148,23 @@ const loginUser = async (req, res) => {
     }
 }
 
-module.exports = {loginUser};
+const getUserPlaylists = async (req, res) => {
+    console.log('GET USER PLAYLISTS');
+    //id is user we a are looking at
+    //userID is user submitting request
+    const { id } = req.params;
+    console.log('id: ', id);
+    const userID = req.userID;
+    console.log('userID: ', userID);
+    try{
+        let { accessToken } = await User.findOne({userID}).select('accessToken');
+        let playlists = await getSpotifyPlaylists(id, accessToken);
+        res.status(200).json({'playlists': playlists});
+    }catch(error){
+        console.log(error);
+        res.status(401).json({'error': `${error}`});
+    }
+
+}
+
+module.exports = {loginUser, getUserPlaylists};

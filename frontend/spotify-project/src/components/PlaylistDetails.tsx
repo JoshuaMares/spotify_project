@@ -2,10 +2,9 @@ import './PlaylistDetails.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck} from '@fortawesome/free-solid-svg-icons'
 
-const PlaylistInfo = (playlistInfo: any) => {
-
-    return ( 
-        <div className="PlaylistInfo" onClick={()=>{}}>
+const PlaylistDetails = ({playlistInfo}) => {
+    return (
+        <div className="PlaylistDetails" onClick={()=>{}}>
             <div className="Playlist-Image-Container Full-Height">
                 <img src={playlistInfo.images[0].url} alt="{playlist.name}'s image" className="Playlist-Card-Image" />
             </div>
@@ -20,4 +19,4 @@ const PlaylistInfo = (playlistInfo: any) => {
     );
 }
  
-export default PlaylistInfo;
+export default PlaylistDetails;

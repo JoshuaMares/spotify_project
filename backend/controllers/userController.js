@@ -81,6 +81,10 @@ const spotifyUserProfile = async (accessToken) => {
     return await spotifyAPI('https://api.spotify.com/v1/me', 'GET', null, accessToken);
 }
 
+const getSpotifyProfile = async (id, accessToken) => {
+    return await spotifyAPI(`https://api.spotify.com/v1/users/${id}`, 'GET', null, accessToken)
+}
+
 //login
 const loginUser = async (req, res) => {
     //message comes in with auth code
@@ -167,4 +171,23 @@ const getUserPlaylists = async (req, res) => {
 
 }
 
-module.exports = {loginUser, getUserPlaylists};
+const getUserProfile = async (req, res) => {
+    console.log('GET USER PROFILE');
+    //id is user we a are looking at
+    //userID is user submitting request
+    const { id } = req.params;
+    console.log('id: ', id);
+    const userID = req.userID;
+    console.log('userID: ', userID);
+    try{
+        let { accessToken } = await User.findOne({userID}).select('accessToken');
+        let profile = await getSpotifyProfile(id, accessToken);
+        res.status(200).json({'profile': profile});
+    }catch(error){
+        console.log(error);
+        res.status(401).json({'error': `${error}`});
+    }
+
+}
+
+module.exports = {loginUser, getUserPlaylists, getUserProfile};

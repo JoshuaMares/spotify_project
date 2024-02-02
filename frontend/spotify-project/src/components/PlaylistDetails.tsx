@@ -1,10 +1,24 @@
 import './PlaylistDetails.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck} from '@fortawesome/free-solid-svg-icons'
+import { useState } from 'react'
 
-const PlaylistDetails = ({playlistInfo}) => {
+const PlaylistDetails = ({playlistInfoProp}) => {
+    const [playlistInfo, setPlaylistInfo] = useState(playlistInfoProp);
+
+    function selectPlaylist(){
+        console.log(playlistInfo.name, ' clicked');
+        if(playlistInfo.selected){
+            playlistInfo.selected = false;
+        }else{
+            playlistInfo.selected = true;
+        }
+        const newPlaylistInfo = {...playlistInfo};
+        setPlaylistInfo(newPlaylistInfo);
+    }
+
     return (
-        <div className="PlaylistDetails" onClick={()=>{}}>
+        <div className="PlaylistDetails" onClick={()=>{selectPlaylist()}}>
             <div className="Playlist-Image-Container Full-Height">
                 <img src={playlistInfo.images[0].url} alt="{playlist.name}'s image" className="Playlist-Card-Image" />
             </div>

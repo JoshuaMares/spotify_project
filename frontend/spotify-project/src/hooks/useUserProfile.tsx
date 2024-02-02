@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 
-const usePlaylists = (userID: string) => {
+const useUserProfile = (userID: string) => {
     const { user } = useAuthContext();
-    const [playlists, setPlaylists] = useState<any>(null);
+    const [userProfile, setUserProfile] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
 
-    let playlistsObject = {playlists, setPlaylists, isLoading, setIsLoading, error, setError};
+    let userProfileObject = {userProfile, setUserProfile, isLoading, setIsLoading, error, setError};
 
     useEffect(() => {
         const abortCont = new AbortController();
@@ -22,18 +22,18 @@ const usePlaylists = (userID: string) => {
         };
 
         const fetchPlaylists = async () => {
-            console.log('FETCHING PLAYLISTS');
+            console.log('FETCHING USER PROFILE');
 
-            const response = await fetch(`http://localhost:4000/user/${userID}/playlists`, fetchParameters);
+            const response = await fetch(`http://localhost:4000/user/${userID}/profile`, fetchParameters);
             const json = await response.json();
 
             if(!response.ok){
-                console.log('ERROR GETTING PLAYLISTS');
+                console.log('ERROR GETTING PROFILE');
                 setIsLoading(false);
                 setError(json.error);
             }else{
                 console.log('json: ', json);
-                setPlaylists(json.playlists);
+                setUserProfile(json.profile);
                 setIsLoading(false);
             }
         }
@@ -46,7 +46,7 @@ const usePlaylists = (userID: string) => {
         return () => abortCont.abort();
     }, []);
 
-    return playlistsObject;
+    return userProfileObject;
 }
 
-export {usePlaylists};
+export {useUserProfile};

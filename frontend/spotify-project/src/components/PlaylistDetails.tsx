@@ -3,31 +3,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck} from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 
-const PlaylistDetails = ({playlistInfoProp}) => {
-    const [playlistInfo, setPlaylistInfo] = useState(playlistInfoProp);
-
-    function selectPlaylist(){
-        console.log(playlistInfo.name, ' clicked');
-        if(playlistInfo.selected){
-            playlistInfo.selected = false;
-        }else{
-            playlistInfo.selected = true;
-        }
-        const newPlaylistInfo = {...playlistInfo};
-        setPlaylistInfo(newPlaylistInfo);
-    }
+const PlaylistDetails = ({playlistInfoProp, indexProp, onClickProp}) => {
 
     return (
-        <div className="PlaylistDetails" onClick={()=>{selectPlaylist()}}>
+        <div className="PlaylistDetails" onClick={()=>{onClickProp(indexProp)}}>
             <div className="Playlist-Image-Container Full-Height">
-                <img src={playlistInfo.images[0].url} alt="{playlist.name}'s image" className="Playlist-Card-Image" />
+                <img src={playlistInfoProp.images[0].url} alt="{playlist.name}'s image" className="Playlist-Card-Image" />
             </div>
             <div className="Playlist-Text-Container Full-Height">
-                <p className='Playlist-Text'> {playlistInfo.name} </p>
-                <p className="Playlist-Text Small-Text"> {playlistInfo.owner.display_name} </p>
+                <p className='Playlist-Text'> {playlistInfoProp.name} </p>
+                <p className="Playlist-Text Small-Text"> {playlistInfoProp.owner.display_name} </p>
             </div>
             <div className="Playlist-Checker-Container Full-Height">
-                <FontAwesomeIcon icon={faCheck} className={playlistInfo.selected ? "Playlist-Checked" : "Hidden"}/>
+                <FontAwesomeIcon icon={faCheck} className={playlistInfoProp.selected ? "Playlist-Checked" : "Hidden"}/>
             </div>
         </div>
     );

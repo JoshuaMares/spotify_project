@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mixerSchema = new Schema({
-    'playlistName': {
+    'playlistName': {//dont need as we pull live
         'type': String,
         'required': true,
     },
@@ -22,11 +22,11 @@ const mixerSchema = new Schema({
         'type': Array,
         'required': true,
     },
-    'options': {
+    'options': {//dont need
         'type': Object,
         'required': true,
     },
-    'constituentPlaylists': {
+    'constituentPlaylists': {//just add as we go
         'type': Array,
         'required': true,
     },

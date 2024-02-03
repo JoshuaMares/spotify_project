@@ -11,18 +11,23 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 
 const Playlists = () => {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
     function mixPlaylists(){
         let selectedPlaylists = playlistObject.playlists.filter((playlist: any) => playlist.selected)
                             .map((playlist: any) => {
                                 return {
-                                    'name': playlist.name,
-                                    'id': playlist.id
+                                    ...playlist,
+                                    'selected': false,
                                 }
                             });
         console.log('playlists to mix:' + JSON.stringify(selectedPlaylists));
-    //     navigate('/mixers', {'state': {'userID': userInfoObject.data.id, 'playlists': selectedPlaylists}});
+
+        if(selectedPlaylists.length < 2){
+            alert('Need at least two playlists to create a mix!');
+            return;
+        }
+        navigate('/mixers', {'state': {'playlists': selectedPlaylists}});
         return;
     }
 
@@ -49,10 +54,6 @@ const Playlists = () => {
             playlists[index].selected = true;
         }
         const updatedPlaylists = [...playlists];
-        // playlistObject.setPlaylists((prevState: any) => ({
-        //     ...prevState,
-        //     'items': updatedPlaylists
-        // }));
         playlistObject.setPlaylists(updatedPlaylists);
     }
 
@@ -81,7 +82,7 @@ const Playlists = () => {
                 playlistObject.playlists.map((playlist: any, index: number) => (
 
                 playlist.name.toLowerCase().includes(searchQuery.toLowerCase())
-                    ? <PlaylistDetails playlistInfoProp={playlist} key={playlist.id}/> 
+                    ? <PlaylistDetails playlistInfoProp={playlist} indexProp={index} onClickProp={selectPlaylist} key={playlist.id}/> //passing in onclick function should work
                     : <div className="Hidden"></div>
                 // <div className={playlist.name.toLowerCase().includes(searchQuery.toLowerCase()) ? "Playlist-Card" : "Hidden"} key={playlist.id} onClick={() => {selectPlaylist(index)}}>
                 //     <div className="Playlist-Card-Image-Container Full-Height">

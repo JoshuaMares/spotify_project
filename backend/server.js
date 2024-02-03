@@ -7,6 +7,7 @@ const cors = require("cors");
 const bodyParser = require('body-parser')
 
 const userRoutes = require('./routes/user.js');
+const mixersRoutes = require('./routes/mixers.js');
 
 //init
 const app = express();
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 
 //routes
 app.use('/user', userRoutes);
+app.use('/mixers', mixersRoutes);
 
 app.get('/', (req, res) => {
     res.json({'mssg': 'Welcome to the app'});

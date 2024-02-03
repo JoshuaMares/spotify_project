@@ -6,6 +6,7 @@
     font-size: large;
     height: calc(0.15 * var(--img-dims));
     /* border: 1px solid var(--spotify-white); */
+    color: var(--spotify-white);
 }
 
 .Full-Height{

@@ -9,19 +9,6 @@ import Playlists from '../components/Playlists';
 
 const Home = () => {
     const [window, setWindow] = useState('invites');
-    /*
-    const userInfoObject = {'error': 'none', 'isPending': false, 'data': []};//useSpotify('https://api.spotify.com/v1/me', 'GET', null);
-    const playlistObject = {'error': 'none', 'isPending': false, 'data': []};//useSpotify('https://api.spotify.com/v1/me/playlists', 'GET', null);
-
-    return (  
-        <div className="Home">
-            {playlistObject.error && <Error error={playlistObject.error}/>}
-            {playlistObject.isPending && <Loading/>}
-            {window == 'invites' && <Invites/>}
-            {playlistObject.data && window == 'library' && <Playlists userInfoObject={userInfoObject} playlistObject={playlistObject}/>}
-        </div>
-    );
-    */
     return (
         <div className="Home">
             {window == 'invites' && <Invites/>}

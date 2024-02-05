@@ -1,45 +1,41 @@
 const User = require('../models/userModel.js');
+const Mixer = require('../models/mixerModel.js');
 const AuthCode = require('../models/authCodeModel.js');
-const jwt = require('jsonwebtoken');
 const spotify = require('../middleware/spotifyFunctions.js');
-
+const jwt = require('jsonwebtoken');
 
 const createToken = (userID) => {
     return jwt.sign({'userID': userID}, process.env.SECRET, {'expiresIn': '3d'});
 }
 
 //login
-const loginUser = async (req, res) => {
-    //message comes in with auth code
-    console.log('req body: ', req.body);
-    const { code } = req.body;
-    if(code == null){
-        console.log('no code');
-        res.status(400).send('no code provided');
+const createMix = async (req, res) => {
+    console.log('CREATE MIX');
+    /* 
+        When creating a mixer we want to
+            -> create the playlist
+                ->give playlist name
+                ->give playlist description
+            ->add the relevant music to the playlist
+            ->register as a mixer in db
+            ->register mixer to users
+        */
+    //console.log('req body: ', req.body);
+    const { playlistName, playlistDesc, invitees, constituentPlaylists } = req.body;
+    if(playlistName == null){
+        console.log('no name');
+        res.status(400).send('no name provided');
         return;
     }
-    console.log('code: ', code);
+    //create the playlist
+    spotify.createSpotifyPlaylist()
 
-    try{
-        await AuthCode.registerCode(code);
-    }catch(error){
-        console.log('used code');
-        if(error.message !== 'Used Code'){
-            res.status(400).json({'error': error.message});
-        }
-        return;
-    }
-    //get tokens using auth code
-    const tokenPackage = await spotify.getSpotifyTokens(code);
-    if(!tokenPackage.ok){
-        console.log('error retrieving tokens');
-        res.status(400).json({'error': 'Error retrieving tokens'});
-        return;
-    }
-    console.log(tokenPackage);
+
+
+    
 
     //get spotify user profile with token
-    const userInfo = await spotify.spotifyUserProfile(tokenPackage.access_token);
+    const userInfo = await spotifyUserProfile(tokenPackage.access_token);
     if(!userInfo.ok){
         console.log('error pulling user info');
         res.status(400).json({'error': 'Error pulling user info'});
@@ -85,7 +81,7 @@ const getUserPlaylists = async (req, res) => {
     console.log('userID: ', userID);
     try{
         let { accessToken } = await User.findOne({userID}).select('accessToken');
-        let playlists = await spotify.getSpotifyPlaylists(id, accessToken);
+        let playlists = await getSpotifyPlaylists(id, accessToken);
         res.status(200).json({'playlists': playlists});
     }catch(error){
         console.log(error);
@@ -104,7 +100,7 @@ const getUserProfile = async (req, res) => {
     console.log('userID: ', userID);
     try{
         let { accessToken } = await User.findOne({userID}).select('accessToken');
-        let profile = await spotify.getSpotifyProfile(id, accessToken);
+        let profile = await getSpotifyProfile(id, accessToken);
         res.status(200).json({'profile': profile});
     }catch(error){
         console.log(error);

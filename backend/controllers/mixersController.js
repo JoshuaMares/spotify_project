@@ -8,7 +8,6 @@ const createToken = (userID) => {
     return jwt.sign({'userID': userID}, process.env.SECRET, {'expiresIn': '3d'});
 }
 
-//login
 const createMix = async (req, res) => {
     console.log('CREATE MIX');
     /* 
@@ -19,8 +18,7 @@ const createMix = async (req, res) => {
             ->add the relevant music to the playlist
             ->register as a mixer in db
             ->register mixer to users
-        */
-    //console.log('req body: ', req.body);
+    */
     const { playlistName, playlistDesc, invitees, constituentPlaylists } = req.body;
     if(playlistName == null){
         console.log('no name');
@@ -28,7 +26,15 @@ const createMix = async (req, res) => {
         return;
     }
     //create the playlist
-    spotify.createSpotifyPlaylist()
+    let newPlaylistObject = spotify.createSpotifyPlaylist(userID, playlistName, playlistDesc, accessToken)
+    let newPlaylistID = newPlaylistObject.id;
+    //const addedSongs = new Set();
+    //for playlist in constituent playlist
+    for(let i = 0; i < constituentPlaylists.length; i++){
+        let songlist = spotify.getPlaylistSongs(playlistID, accessToken)
+    }
+        //pull some songs while we can
+            //for each of those pulls, add songs to playlist
 
 
 
@@ -109,4 +115,4 @@ const getUserProfile = async (req, res) => {
 
 }
 
-module.exports = {loginUser, getUserPlaylists, getUserProfile};
+module.exports = {getUserPlaylists, getUserProfile};

@@ -80,6 +80,17 @@ const createSpotifyPlaylist = async (userID, playlistName, playlistDesc, accessT
     return playlistObject;
 }
 
+const getPlaylistSongs = async (playlistID, accessToken) => {
+    let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks`;
+    let songsArray = [];
+    while(url){
+        let tracksObject = await spotifyAPI(url, 'GET', null, accessToken)
+        songsArray = songsArray.concat(tracksObject.items);
+        url = tracksObject.next;
+    }
+    return songsArray;
+}
+
 const spotifyUserProfile = async (accessToken) => {
     return await spotifyAPI('https://api.spotify.com/v1/me', 'GET', null, accessToken);
 }

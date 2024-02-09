@@ -7,15 +7,6 @@ function useMixers(){
     const [error, setError] = useState<null | String>(null);
 
     const createMixer = async (playlistName: string, playlistDesc: string, invitees: Array<string>, constituentPlaylists: Array<string>) => {
-        /* 
-        When creating a mixer we want to
-            -> create the playlist
-                ->give playlist name
-                ->give playlist description
-            ->add the relevant music to the playlist
-            ->register as a mixer in db
-            ->register mixer to users
-        */
         setIsLoading(true);
         setError(null);
 

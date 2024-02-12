@@ -74,6 +74,18 @@ userSchema.statics.updateSpotifyTokens = async function(userID, accessToken, ref
     return user;
 }
 
+userSchema.statics.updateMixers = async function(userID, mixerID){
+    if( !userID || !mixerID ){
+        throw Error('All fields must be filled');
+    }
+
+    const user = await this.findOne({'userID': userID});
+    user.mixers.push(mixerID);
+    await user.save();
+    
+    return user;
+}
+
 userSchema.statics.info = async function(userID){
     if(!userID){
         throw Error('No userID provided');

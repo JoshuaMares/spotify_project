@@ -14,9 +14,9 @@ router.post('/create', createMixer);
 router.get('/:id', getMixerInfo);
 
 //add users to mixer
-router.post('/:id/add_users', addUsers);
+router.put('/:id/add_users', addUsers);
 
 //add
-router.post('/:id/add_playlists', addPlaylists);
+router.put('/:id/add_playlists', addPlaylists);
 
 module.exports = router;

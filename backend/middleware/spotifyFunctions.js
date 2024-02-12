@@ -76,12 +76,12 @@ const createSpotifyPlaylist = async (userID, playlistName, playlistDesc, accessT
         'collaborative': true,
         'description': playlistDesc, 
     };
-    let playlistObject = await spotifyAPI(url, 'POST', body, accessToken);
+    let playlistObject = await spotifyAPI(url, 'POST', JSON.stringify(body), accessToken);
     return playlistObject;
 }
 
 const getPlaylistSongs = async (playlistID, accessToken) => {
-    let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks`;
+    let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks?limit=50`;
     let songsArray = [];
     while(url){
         let tracksObject = await spotifyAPI(url, 'GET', null, accessToken)
@@ -89,6 +89,20 @@ const getPlaylistSongs = async (playlistID, accessToken) => {
         url = tracksObject.next;
     }
     return songsArray;
+}
+
+const addSongsToPlaylist = async (playlistID, songURIList, accessToken) => {
+    let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks`;
+    const SIZE = 100;
+
+    for (let i=0; i < songURIList.length; i+=SIZE) {
+        let batch = songURIList.slice(i,i+SIZE);
+        let body = {
+            'uris': batch,
+        };
+        let response = await spotifyAPI(url, 'POST', JSON.stringify(body), accessToken);
+    }
+    return;
 }
 
 const spotifyUserProfile = async (accessToken) => {
@@ -105,4 +119,6 @@ module.exports = {
     spotifyUserProfile,
     getSpotifyProfile,
     createSpotifyPlaylist,
+    getPlaylistSongs,
+    addSongsToPlaylist,
 }

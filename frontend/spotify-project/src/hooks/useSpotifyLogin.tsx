@@ -43,7 +43,8 @@ function connect(){
                       'user-read-recently-played', //read recent listening activity
                       'user-library-modify', //make playlists
                       'user-library-read', //read other items in library (likes songs, albums, podcasts, etc)
-                      'user-read-private']; //read profile
+                      'user-read-private',//read profile
+                      'user-read-email']; //read email
         let url = AUTHORIZE_URL;
         url += "client_id=" + CLIENT_ID;
         url += "&response_type=code";

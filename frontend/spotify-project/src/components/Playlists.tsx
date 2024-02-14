@@ -80,22 +80,11 @@ const Playlists = () => {
             {playlistObject.isLoading && <Loading/>}
             {!playlistObject.isLoading && (
                 playlistObject.playlists.map((playlist: any, index: number) => (
-
-                playlist.name.toLowerCase().includes(searchQuery.toLowerCase())
-                    ? <PlaylistDetails playlistInfoProp={playlist} indexProp={index} onClickProp={selectPlaylist} key={playlist.id}/> //passing in onclick function should work
-                    : <div className="Hidden"></div>
-                // <div className={playlist.name.toLowerCase().includes(searchQuery.toLowerCase()) ? "Playlist-Card" : "Hidden"} key={playlist.id} onClick={() => {selectPlaylist(index)}}>
-                //     <div className="Playlist-Card-Image-Container Full-Height">
-                //         <img src={playlist.images[0].url} alt="{playlist.name}'s image" className="Playlist-Card-Image" />
-                //     </div>
-                //     <div className="Playlist-Text Full-Height">
-                //         <p className='Playlist-Name'> {playlist.name} </p>
-                //     </div>
-                //     <div className="Playlist-Checker-Container Full-Height">
-                //         <FontAwesomeIcon icon={faCheck} className={playlist.selected ? "Playlist-Checked" : "Hidden"}/>
-                //     </div>
-                // </div>
-            )))}
+                    playlist.name.toLowerCase().includes(searchQuery.toLowerCase())
+                        ? <PlaylistDetails playlistInfoProp={playlist} indexProp={index} onClickProp={selectPlaylist} key={playlist.id}/> //passing in onclick function should work
+                        : <div className="Hidden"></div>
+                ))
+            )}
         </div>
     );
 }

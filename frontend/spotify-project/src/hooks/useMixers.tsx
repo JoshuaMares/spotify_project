@@ -3,10 +3,11 @@ import { useAuthContext } from "./useAuthContext";
 
 function useMixers(){
     const { user } = useAuthContext();
+    const [mixerObject, setMixerObject] = useState<any>(null)
     const [isLoading, setIsLoading] = useState<null | Boolean>(null);
     const [error, setError] = useState<null | String>(null);
 
-    const createMixer = async (playlistName: string, playlistDesc: string, invitees: Array<string>, constituentPlaylists: Array<string>) => {
+    const createMixer = async (playlistName: string, playlistDesc: string, contributors: Array<string>, constituentPlaylists: Array<string>) => {
         setIsLoading(true);
         setError(null);
 
@@ -20,7 +21,7 @@ function useMixers(){
             body: JSON.stringify({
                 playlistName,
                 playlistDesc,
-                invitees,
+                contributors,
                 constituentPlaylists
             }),
             signal: abortCont.signal
@@ -33,10 +34,12 @@ function useMixers(){
             setIsLoading(false);
             setError(json.error);
         }else{
-            
+            setMixerObject(json.mixerDetails);
             setIsLoading(false);
         }
     }
 
-    return {createMixer, isLoading, error};
+    return {createMixer, mixerObject, isLoading, error};
 }
+
+export { useMixers }

@@ -1,5 +1,5 @@
 const express = require('express');
-const { createMixer, getMixerInfo, addUsers, addPlaylists } = require('../controllers/mixersController.js');
+const { createMixer, getMixerInfo, updateMixer } = require('../controllers/mixersController.js');
 const requireAuth = require('../middleware/requireAuth.js');
 
 const router = express.Router();
@@ -14,9 +14,6 @@ router.post('/create', createMixer);
 router.get('/:id', getMixerInfo);
 
 //add users to mixer
-router.put('/:id/add_users', addUsers);
-
-//add
-router.put('/:id/add_playlists', addPlaylists);
+router.put('/:id/update', updateMixer);
 
 module.exports = router;

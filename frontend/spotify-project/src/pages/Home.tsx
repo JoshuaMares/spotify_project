@@ -4,20 +4,20 @@ import { faEnvelope, faSwatchbook } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react';
 import Loading from './Loading';
 import Error from './Error';
-import Invites from './Invites';
+import Mixers from './Mixers';
 import Playlists from '../components/Playlists';
 
 const Home = () => {
-    const [window, setWindow] = useState('invites');
+    const [window, setWindow] = useState('mixers');
     return (
         <div className="Home">
-            {window == 'invites' && <Invites/>}
+            {window == 'mixers' && <Mixers/>}
             {window == 'library' && <Playlists/>}
 
             <div className="Buttons-Container">
-                <div className="Buttons Invites" onClick={() => setWindow('invites')}>
+                <div className="Buttons Mixers" onClick={() => setWindow('mixers')}>
                     <FontAwesomeIcon icon={faEnvelope} className='Buttons-Icon'/>
-                    <p>Invites</p>
+                    <p>Mixers</p>
                 </div>
                 <div className="Buttons Library" onClick={() => setWindow('library')}>
                     <FontAwesomeIcon icon={faSwatchbook} className='Buttons-Icon'/>

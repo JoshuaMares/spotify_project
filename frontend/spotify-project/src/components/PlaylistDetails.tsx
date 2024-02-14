@@ -4,11 +4,12 @@ import { faCheck} from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 
 const PlaylistDetails = ({playlistInfoProp, indexProp, onClickProp}) => {
+    console.log(playlistInfoProp);
 
     return (
         <div className="PlaylistDetails" onClick={()=>{onClickProp(indexProp)}}>
             <div className="Playlist-Image-Container Full-Height">
-                <img src={playlistInfoProp.images[0].url} alt="{playlist.name}'s image" className="Playlist-Card-Image" />
+                <img src={playlistInfoProp.images[0]?.url} alt="image" className="Playlist-Card-Image" />
             </div>
             <div className="Playlist-Text-Container Full-Height">
                 <p className='Playlist-Text'> {playlistInfoProp.name} </p>

@@ -1,14 +1,16 @@
 import './MixDetails.css';
 import { useState, useEffect} from "react"
 import { useLocation, useNavigate } from "react-router-dom";
+import { useMixers } from "../hooks/useMixers"
 import PlaylistDetails from '../components/PlaylistDetails';
 
 const MixDetails = (props: any) => {
     const [mixName, setName] = useState('My Mix');
     const [mixDesc, setDesc] = useState('Sickest Mix since pb & j');
-    const [basePlaylist, setBasePlaylist] = useState('');
+    const [contributors, setContributors] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
+    const { createMixer, mixerObject, isLoading, error } = useMixers();
     console.log('location state: ', location.state);
 
     useEffect(() => {
@@ -20,36 +22,19 @@ const MixDetails = (props: any) => {
 
     let playlists = location.state.playlists;
 
-    // let playlistTracksObjects = location.state.playlists.map((playlist: any) => {
-    //     return useSpotify(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, 'GET', null);
-    // })
-    // //console.log('playlist tracks objects: ' + JSON.stringify(playlistTracksObjects));
-
-    // function countUnfinished(){
-    //     return playlistTracksObjects.map((playlistTracksObject: any) => playlistTracksObject.isFinished ? 0 : 1)
-    //         .reduce((accumulator: number, currentVal: any) => accumulator + currentVal, 0)
-    // }
-
-    function createMix(event: Event){
+    async function createMix(event: Event){
         event.preventDefault();
-        //combine playlists here
-        // let songObjectList: any[] = [];
-        // playlistTracksObjects.forEach((element: any) => {
-        //     songObjectList = songObjectList.concat(element.data.items);
-        // });
-        // let songList = songObjectList.map((element) => {
-        //     return {'name': element.track.name, 'uri': element.track.uri}
-        // });
-        // console.log(JSON.stringify(songList));
-        // navigate('/creating_playlist', {'state': {'userID': location.state.userID, 'playlistName': mixName, 'playlistDesc': mixDesc, 'songList': songList}});
         console.log('clicking create mix button');
+        let contributorsArray = contributors.split(' ').filter((c) => c.length);
+        let constituentPlaylists = playlists.map((playlist:any) => {return playlist.id});
+        await createMixer(mixName, mixDesc, contributorsArray, constituentPlaylists);
+        if(error){
+            alert(error);
+        }else{
+            console.log('mixerobject: ', mixerObject);
+        }
         return;
     }
-
-    // // function fileSelectHandler(event: any){
-    // //     console.log(event.target.files[0]);
-    // //     setImage(event.target.files[0]);
-    // // }
 
     return ( 
         <div className="MixDetails">

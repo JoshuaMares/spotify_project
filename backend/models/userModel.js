@@ -66,6 +66,9 @@ userSchema.statics.updateSpotifyTokens = async function(userID, accessToken, ref
     }
     //find
     const user = await this.findOne({'userID': userID});
+    if(!user){
+        throw Error(`Could not find user ${userID}`);
+    }
     //update locally
     user.accessToken = accessToken;
     user.refreshToken = refreshToken;
@@ -82,7 +85,7 @@ userSchema.statics.updateMixers = async function(userID, mixerID){
     const user = await this.findOne({'userID': userID});
     user.mixers.push(mixerID);
     await user.save();
-    
+
     return user;
 }
 

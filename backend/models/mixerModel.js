@@ -50,19 +50,23 @@ mixerSchema.statics.info = async function(playlistID){
         throw Error('No playlistID provided');
     }
     const mixer = await this.findOne({'playlistID': playlistID});
+    if(!mixer){
+        throw Error(`Mixer does not exist with playlistID: ${playlistID}`);
+    }
     return mixer;
 }
 
-// userSchema.statics.addContributors = async function(userID, accessToken, refreshToken){
-    
-//     //find
-//     const user = await this.findOne({'userID': userID});
-//     //update locally
-//     user.accessToken = accessToken;
-//     user.refreshToken = refreshToken;
-//     //save updates to db
-//     await user.save();
-//     return user;
-// }
+mixerSchema.statics.addContributors = async function(playlistID, contributors){
+    if(!playlistID || !contributors){
+        throw Error('All fields must be filled');
+    }
+
+    const mixer = await this.findOne({playlistID});
+    let temp = mixer.contributors.concat(contributors);
+    temp = [...new Set(temp)];
+    mixer.contributors = temp;
+    await mixer.save();
+    return mixer;
+}
 
 module.exports = mongoose.model('Mixer', mixerSchema);

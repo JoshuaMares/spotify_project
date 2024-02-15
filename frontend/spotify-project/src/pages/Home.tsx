@@ -8,6 +8,7 @@ import Mixers from './Mixers';
 import Playlists from '../components/Playlists';
 
 const Home = () => {
+    //pull user info here
     const [window, setWindow] = useState('mixers');
     return (
         <div className="Home">

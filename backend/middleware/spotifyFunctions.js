@@ -80,6 +80,12 @@ const createSpotifyPlaylist = async (userID, playlistName, playlistDesc, accessT
     return playlistObject;
 }
 
+const getPlaylistInfo = async (playlistID, accessToken) => {
+    let url = `https://api.spotify.com/v1/playlists/${playlistID}`;
+    let playlistObject = await spotifyAPI(url, 'GET', null, accessToken)
+    return playlistObject;
+}
+
 const getPlaylistSongs = async (playlistID, accessToken) => {
     let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks?limit=50`;
     let songsArray = [];
@@ -121,4 +127,5 @@ module.exports = {
     createSpotifyPlaylist,
     getPlaylistSongs,
     addSongsToPlaylist,
+    getPlaylistInfo,
 }

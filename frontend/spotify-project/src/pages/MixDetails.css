@@ -5,7 +5,7 @@
 .Info-Container{
     display: flex;
     flex-direction: row;
-    height: calc(0.15 * var(--img-dims));
+    /* height: calc(0.15 * var(--img-dims)); */
     width: 100%;
 }
 
@@ -36,12 +36,23 @@
     width: 100%;
 }
 
+.Mix-Input{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 2.5% 5%
+}
+
+.Input-Prompt{
+    color: var(--spotify-white);
+}
+
 .Text-Container input{
     border: none;
     background-color: var(--spotify-dark-grey);
     color: var(--spotify-white);
     font-size: large;
-    width: 85%;
+    width: 100%;
 }
 
 .Text-Container input::placeholder{

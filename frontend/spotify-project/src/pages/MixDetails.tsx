@@ -5,8 +5,8 @@ import { useMixers } from "../hooks/useMixers"
 import PlaylistDetails from '../components/PlaylistDetails';
 
 const MixDetails = (props: any) => {
-    const [mixName, setName] = useState('My Mix');
-    const [mixDesc, setDesc] = useState('Sickest Mix since pb & j');
+    const [mixName, setName] = useState('');
+    const [mixDesc, setDesc] = useState('');
     const [contributors, setContributors] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
@@ -38,41 +38,32 @@ const MixDetails = (props: any) => {
 
     return ( 
         <div className="MixDetails">
-            <form className="Mix-Info" onSubmit={createMix}>
+            <form className="Mix-Info" onSubmit={async (event) => {await createMix(event)}}>
                 <div className="Info-Container">
                     {/* <div className="Mix-Image-Container">
                         {mixImage && <img className="Mix-Image" src={URL.createObjectURL(mixImage)} alt="chosen mix image"/>}
                         <input type="file" onChange={fileSelectHandler} accept="image/*"/>
                     </div> */}
                     <div className="Text-Container">
-                        <input type="text" className="Mix-Name" value={mixName} onChange={(e) => setName(e.target.value)} placeholder="Name" autoComplete="off" required/>
-                        <input type="text" className="Mix-Desc" value={mixDesc} onChange={(e) => setDesc(e.target.value)} placeholder="Desc" autoComplete="off" required/>
+                        <div className="Mix-Input">
+                            <p className="Input-Prompt">Name:</p>
+                            <input type="text" className="Mix-Name" value={mixName} onChange={(e) => setName(e.target.value)} placeholder="My Mix" autoComplete="off" required/>
+                        </div>
+                        <div className="Mix-Input">
+                            <p className="Input-Prompt">Desc:</p>
+                            <input type="text" className="Mix-Desc" value={mixDesc} onChange={(e) => setDesc(e.target.value)} placeholder="Sickest Mix Since PB&J" autoComplete="off"/>
+                        </div>
+                        <div className="Mix-Input">
+                            <p className="Input-Prompt">Friends:</p>
+                            <input type="text" className="Mix-Contributors" value={contributors} onChange={(e) => setContributors(e.target.value)} placeholder="username1 username2 ..." autoComplete="off"/>
+                        </div>
                     </div>
                 </div>
                 {playlists.map((playlist: any) => {
-                    {console.log(playlist)}
                     return <PlaylistDetails playlistInfoProp={playlist} indexProp={null} onClickProp={() => {}} key={playlist.id}/>
                 })}
-                {/* {playlistTracksObjects.map((ptObject: any, index: number) =>{
-                    if(!ptObject.isPending){
-                        return (
-                            <div className="PlaylistCard">
-                                <div className="PlaylistName"><p style={{'color': 'white'}}>{location.state.playlists[index].name}</p></div>
-                                <div className="PlaylistSongs">
-                                    {ptObject.data.items.map((songInfo: any) => {
-                                        return (<p style={{'color': 'white'}}>{songInfo.track.name}</p>);
-                                    })}
-                                </div>
-                            </div>
-                        )
-                    }
-                })} */}
                 <div className="Mix-Button-Container">
                     <button className="Mix-Button">Mix</button> 
-                    {/* {countUnfinished() 
-                        ? <button className="Wait-Button" onClick={(event) => {event.preventDefault()}}>Loading Music...</button> 
-                        : <button className="Mix-Button">Mix</button> 
-                    } */}
                 </div>
             </form>
         </div>

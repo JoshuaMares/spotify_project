@@ -34,6 +34,7 @@ function useMixers(){
             setIsLoading(false);
             setError(json.error);
         }else{
+            console.log('json: ', json);
             setMixerObject(json.mixerDetails);
             setIsLoading(false);
         }

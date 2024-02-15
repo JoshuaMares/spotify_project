@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 
-const useUserProfile = (userID: string) => {
+const useUserMixers = (userID: string) => {
     const { user } = useAuthContext();
-    const [userProfile, setUserProfile] = useState<any>(null);
+    const [mixers, setMixers] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<any>(null);
 
-    let userProfileObject = {userProfile, setUserProfile, isLoading, setIsLoading, error, setError};
+    let mixersObject = {mixers, isLoading, error};
 
     useEffect(() => {
         const abortCont = new AbortController();
@@ -22,18 +22,18 @@ const useUserProfile = (userID: string) => {
         };
 
         const fetchPlaylists = async () => {
-            console.log('FETCHING USER PROFILE');
+            console.log('FETCHING USER MIXERS PROFILE');
 
-            const response = await fetch(`http://localhost:4000/user/${userID}/profile`, fetchParameters);
+            const response = await fetch(`http://localhost:4000/user/${userID}/mixers`, fetchParameters);
             const json = await response.json();
 
             if(!response.ok){
-                console.log('ERROR GETTING PROFILE');
+                console.log('ERROR GETTING MIXERS PROFILE');
                 setIsLoading(false);
                 setError(json.error);
             }else{
                 console.log('json: ', json);
-                setUserProfile(json.profile);
+                setMixers(json.mixers);
                 setIsLoading(false);
             }
         }
@@ -46,7 +46,7 @@ const useUserProfile = (userID: string) => {
         return () => abortCont.abort();
     }, []);
 
-    return userProfileObject;
+    return mixersObject;
 }
 
-export {useUserProfile};
+export {useUserMixers};

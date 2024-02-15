@@ -1,12 +1,6 @@
 const User = require('../models/userModel.js');
 const Mixer = require('../models/mixerModel.js');
-const AuthCode = require('../models/authCodeModel.js');
 const spotify = require('../middleware/spotifyFunctions.js');
-const jwt = require('jsonwebtoken');
-
-const createToken = (userID) => {
-    return jwt.sign({'userID': userID}, process.env.SECRET, {'expiresIn': '3d'});
-}
 
 const createMixer = async (req, res) => {
     console.log('CREATE MIX');
@@ -56,7 +50,7 @@ const createMixer = async (req, res) => {
             await User.updateMixers(realContributors[i], newMixer._id);
         }
 
-        res.status(200).json({'mixerDetails': `${newMixer}`})
+        res.status(200).json({'mixerDetails': newMixer})
     }catch(error){
         console.log(error);
         res.status(401).json({'error': `${error}`});

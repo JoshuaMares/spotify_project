@@ -4,7 +4,7 @@ import { faCheck} from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 
 const PlaylistDetails = ({playlistInfoProp, indexProp, onClickProp}) => {
-    console.log(playlistInfoProp);
+    //console.log(playlistInfoProp);
 
     return (
         <div className="PlaylistDetails" onClick={()=>{onClickProp(indexProp)}}>

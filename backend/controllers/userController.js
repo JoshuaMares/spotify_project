@@ -1,4 +1,5 @@
 const User = require('../models/userModel.js');
+const Mixer = require('../models/mixerModel.js')
 const AuthCode = require('../models/authCodeModel.js');
 const jwt = require('jsonwebtoken');
 const spotify = require('../middleware/spotifyFunctions.js');
@@ -113,4 +114,60 @@ const getUserProfile = async (req, res) => {
 
 }
 
-module.exports = {loginUser, getUserPlaylists, getUserProfile};
+const getUserMixers = async (req, res) => {
+    console.log("GET USER MIXERS");
+    const userID = req.userID;
+    try{
+        //get mixers list
+        let user = await User.findOne({userID});
+        if(!user){throw Error("Cannot find user");}
+        //get mixers list and pull info
+        let mixerList = user.mixers;
+        let mixerInfoList = []
+        for(let i = 0; i < mixerList.length; i++){
+            let mixerInfo = await Mixer.findOne({'_id': mixerList[i]});
+            if(mixerInfo){mixerInfoList.push(mixerInfo)}
+        }
+        let data = [];
+        for(let i = 0; i < mixerInfoList.length; i++){
+            let mixerInfo = mixerInfoList[i];
+            //grab playlist info
+            let playlistInfo = await spotify.getPlaylistInfo(mixerInfo.playlistID, user.accessToken);
+            
+            //grab names of all contributors
+            let displayNameList = [];
+            for(let j = 0; j < mixerInfo.contributors.length; j++){
+                let profile = await spotify.getSpotifyProfile(mixerInfo.contributors[j], user.accessToken);
+                //console.log(`adding profile ${mixerInfo.contributors[i]}:`, profile);
+                displayNameList.push(profile.display_name);
+            }
+            /*
+                pass back array of objects:
+                mixer name
+                playlistID
+                playlist link
+                playlist image
+                array of contributor(display name not usernames)
+            */
+            data.push({
+                'name': playlistInfo.name,
+                'playlistID': playlistInfo.id,
+                'playlistLink': playlistInfo.external_urls.spotify,
+                'playlistImage': (playlistInfo.images.length ? playlistInfo.images[0].url : null),
+                'displayNames': displayNameList
+            })
+        }
+        res.status(200).json({'data': data});
+    }catch(error){
+        console.log(error);
+        res.status(401).json({'error': `${error}`});
+    }
+    return;
+}
+
+module.exports = {
+    loginUser,
+    getUserPlaylists,
+    getUserProfile,
+    getUserMixers
+};

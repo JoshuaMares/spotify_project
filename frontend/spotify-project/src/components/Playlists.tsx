@@ -8,7 +8,7 @@ import Error from '../pages/Error';
 import { usePlaylists } from '../hooks/usePlaylists';
 import PlaylistDetails from "../components/PlaylistDetails";
 import { useAuthContext } from '../hooks/useAuthContext';
-import { useUserProfile } from '../hooks/useUserProfile';
+import { useSpotifyProfile } from '../hooks/useSpotifyProfile';
 
 const Playlists = () => {
     const navigate = useNavigate();
@@ -38,10 +38,10 @@ const Playlists = () => {
         window.location.href = 'http://localhost:5173/';
     }
     const playlistObject = usePlaylists(user.userID);
-    const userProfileObject = useUserProfile(user.userID);
+    const userProfileObject = useSpotifyProfile(user.userID);
 
     function profileImageExists(){
-        return userProfileObject.userProfile.images.length ? true : false;
+        return userProfileObject.spotifyProfile.images.length ? true : false;
     }
 
     function selectPlaylist(index: number){
@@ -63,11 +63,11 @@ const Playlists = () => {
                 <div className="Library-Info">
                     {profileImageExists()  && 
                         <div className="User-Image-Container">
-                            <img src={userProfileObject.userProfile.images[0].url} alt='User Image' className='User-Image' />
+                            <img src={userProfileObject.spotifyProfile.images[0].url} alt='User Image' className='User-Image' />
                         </div>
                     }
                     <div className="Banner-Container">
-                        <p className="Banner">{userProfileObject.userProfile.display_name}'s playlists</p>
+                        <p className="Banner">{userProfileObject.spotifyProfile.display_name}'s playlists</p>
                     </div>
                     <div className="Mix-Page-Button-Container">
                         <FontAwesomeIcon icon={faArrowsSpin} className='Mix-Page-Button' onClick={mixPlaylists}/>

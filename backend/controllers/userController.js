@@ -157,7 +157,7 @@ const getUserMixers = async (req, res) => {
                 'displayNames': displayNameList
             })
         }
-        res.status(200).json({'data': data});
+        res.status(200).json({'mixers': data});
     }catch(error){
         console.log(error);
         res.status(401).json({'error': `${error}`});

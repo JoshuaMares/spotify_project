@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 
-const useUserMixers = (userID: string) => {
+const useUserMixers = () => {
     const { user } = useAuthContext();
     const [mixers, setMixers] = useState<any>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -21,10 +21,10 @@ const useUserMixers = (userID: string) => {
             'signal': abortCont.signal
         };
 
-        const fetchPlaylists = async () => {
+        const fetchMixers = async () => {
             console.log('FETCHING USER MIXERS PROFILE');
 
-            const response = await fetch(`http://localhost:4000/user/${userID}/mixers`, fetchParameters);
+            const response = await fetch(`http://localhost:4000/user/mixers`, fetchParameters);
             const json = await response.json();
 
             if(!response.ok){
@@ -41,7 +41,7 @@ const useUserMixers = (userID: string) => {
         if(!user){
             setError('You must be logged in first');
         }else{
-            fetchPlaylists();
+            fetchMixers();
         }
         return () => abortCont.abort();
     }, []);

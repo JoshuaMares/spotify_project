@@ -1,0 +1,64 @@
+.MixerDetails{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: large;
+    height: calc(0.15 * var(--img-dims));
+    /* border: 1px solid var(--spotify-white); */
+    color: var(--spotify-white);
+}
+
+.Full-Height{
+    height: 100%;
+}
+
+.Mixer-Image-Container{
+    width: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Mixer-Card-Image{
+    height: calc(0.125 * var(--img-dims));
+    width: calc(0.125 * var(--img-dims));
+}
+
+.Mixer-Text-Container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    border: none;
+    width: 65%;
+}
+
+.Playlist-Link{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: var(--spotify-white);
+    text-decoration: none;
+}
+
+.Mixer-Text{
+    display: flex;
+    align-items: left;
+    max-width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 1%;
+}
+
+.Small-Text{
+    font-size: medium;
+}
+
+.Mixer-Edit-Container{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 10%;
+}

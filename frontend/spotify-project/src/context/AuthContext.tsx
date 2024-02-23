@@ -15,20 +15,21 @@ export const authReducer = (state, action) => {
 
 export const AuthContextProvider = ({ children }) => {
     //children is the component we wrap
+    const userJSON = JSON.parse(localStorage.getItem('user')) || null;
     const [state, dispatch] = useReducer(authReducer, {
-        user: null, 
+        user: userJSON, 
     });
 
-    useEffect(() => {
-        const user = localStorage.getItem('user');
+    // useEffect(() => {
+    //     const user = localStorage.getItem('user');
 
-        if(user){
-            const userJSON= JSON.parse(user);
-            dispatch({type: 'LOGIN', payload: userJSON })
-        }else{
-            //window.location.href = 'http://localhost:5173/'; //landing
-        }
-    }, []);
+    //     if(user){
+    //         const userJSON= JSON.parse(user);
+    //         dispatch({type: 'LOGIN', payload: userJSON })
+    //     }else{
+    //         //window.location.href = 'http://localhost:5173/'; //landing
+    //     }
+    // }, []);
 
     console.log('AuthContext State: ', state);
 
